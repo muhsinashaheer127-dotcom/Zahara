@@ -27,17 +27,17 @@ const ProductCard = ({ product, showBadge = null, onQuickView }) => {
         </Link>
 
         {badge && (
-          <span className="absolute top-4 left-4 px-3 py-1 gold-gradient text-black text-xs font-bold rounded-full uppercase tracking-wider">
+          <span className="absolute top-3 left-3 sm:top-4 sm:left-4 px-2.5 py-1 sm:px-3 sm:py-1 gold-gradient text-black text-[10px] sm:text-xs font-bold rounded-full uppercase tracking-wider">
             {badge}
           </span>
         )}
 
-        <div className="absolute top-4 right-4 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <div className="absolute top-3 right-3 sm:top-4 sm:right-4 flex flex-col gap-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-300">
           <button
             type="button"
             onClick={() => toggleWishlist(product)}
-            className={`p-2.5 rounded-full backdrop-blur-md transition-colors ${
-              inWishlist ? 'bg-gold text-black' : 'bg-black/50 text-white hover:bg-gold hover:text-black'
+            className={`p-2.5 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-full backdrop-blur-md transition-colors ${
+              inWishlist ? 'bg-gold text-black' : 'bg-black/60 text-white hover:bg-gold hover:text-black'
             }`}
             aria-label="Add to wishlist"
           >
@@ -47,7 +47,7 @@ const ProductCard = ({ product, showBadge = null, onQuickView }) => {
             <button
               type="button"
               onClick={() => onQuickView(product)}
-              className="p-2.5 rounded-full bg-black/50 text-white hover:bg-gold hover:text-black backdrop-blur-md transition-colors"
+              className="p-2.5 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-full bg-black/60 text-white hover:bg-gold hover:text-black backdrop-blur-md transition-colors"
               aria-label="Quick view"
             >
               <FiEye size={16} />
@@ -55,11 +55,11 @@ const ProductCard = ({ product, showBadge = null, onQuickView }) => {
           )}
         </div>
 
-        <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+        <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-4 translate-y-0 sm:translate-y-full sm:group-hover:translate-y-0 transition-transform duration-300">
           <button
             type="button"
             onClick={() => addToCart(product)}
-            className="w-full py-2.5 gold-gradient text-black text-sm font-semibold rounded-xl hover:opacity-90 transition-opacity"
+            className="w-full py-2.5 sm:py-3 min-h-[44px] gold-gradient text-black text-xs sm:text-sm font-semibold rounded-xl hover:opacity-90 transition-opacity flex items-center justify-center shadow-lg"
           >
             Rent Now
           </button>

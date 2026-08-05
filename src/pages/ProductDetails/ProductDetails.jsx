@@ -124,7 +124,7 @@ const ProductDetails = () => {
               </div>
 
               {/* Product Name & Code */}
-              <h1 className="text-3xl md:text-4xl font-bold mb-2 text-white">{product.name}</h1>
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 text-white">{product.name}</h1>
               <p className="text-white/40 text-sm mb-4">Product Code: ZH-{product.id}</p>
               
               {/* Category */}
@@ -160,14 +160,14 @@ const ProductDetails = () => {
               </div>
 
               {/* Date Picker */}
-              <div className="grid grid-cols-2 gap-4 mb-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
                 <div>
                   <label className="text-sm text-white/60 mb-2 block">Delivery Date</label>
                   <input
                     type="date"
                     value={startDate}
                     onChange={(e) => setStartDate(e.target.value)}
-                    className="w-full px-4 py-3 bg-charcoal border border-white/10 rounded-xl focus:outline-none focus:border-gold/50 text-white"
+                    className="w-full px-4 py-3 bg-charcoal border border-white/10 rounded-xl focus:outline-none focus:border-gold/50 text-white text-base"
                   />
                 </div>
                 <div>
@@ -176,7 +176,7 @@ const ProductDetails = () => {
                     type="date"
                     value={endDate}
                     onChange={(e) => setEndDate(e.target.value)}
-                    className="w-full px-4 py-3 bg-charcoal border border-white/10 rounded-xl focus:outline-none focus:border-gold/50 text-white"
+                    className="w-full px-4 py-3 bg-charcoal border border-white/10 rounded-xl focus:outline-none focus:border-gold/50 text-white text-base"
                   />
                 </div>
               </div>
@@ -188,11 +188,11 @@ const ProductDetails = () => {
               <div className="mb-6">
                 <label className="text-sm text-white/60 mb-2 block">Quantity</label>
                 <div className="flex items-center gap-3">
-                  <button type="button" onClick={() => setQuantity(Math.max(1, quantity - 1))} className="p-2 border border-white/20 rounded-lg hover:border-gold text-white/80 hover:text-gold transition-all">
+                  <button type="button" onClick={() => setQuantity(Math.max(1, quantity - 1))} className="touch-target border border-white/20 rounded-lg hover:border-gold text-white/80 hover:text-gold transition-all">
                     <FiMinus />
                   </button>
                   <span className="w-8 text-center text-lg font-semibold text-white">{quantity}</span>
-                  <button type="button" onClick={() => setQuantity(quantity + 1)} className="p-2 border border-white/20 rounded-lg hover:border-gold text-white/80 hover:text-gold transition-all">
+                  <button type="button" onClick={() => setQuantity(quantity + 1)} className="touch-target border border-white/20 rounded-lg hover:border-gold text-white/80 hover:text-gold transition-all">
                     <FiPlus />
                   </button>
                 </div>

@@ -48,9 +48,9 @@ const Cart = () => {
       <SEO title="Cart" />
       <div className="section-padding">
         <div className="max-w-7xl mx-auto">
-          <AnimateOnScroll className="mb-12">
-            <h1 className="text-4xl font-bold mb-2">Rental Cart</h1>
-            <p className="text-white/60">{cartItems.length} items in cart</p>
+          <AnimateOnScroll className="mb-8 md:mb-12">
+            <h1 className="text-3xl md:text-4xl font-bold mb-2">Rental Cart</h1>
+            <p className="text-white/60 text-sm md:text-base">{cartItems.length} items in cart</p>
           </AnimateOnScroll>
 
           {cartItems.length > 0 ? (
@@ -76,7 +76,7 @@ const Cart = () => {
                       <button
                         type="button"
                         onClick={() => removeFromCart(item.cartId)}
-                        className="self-start p-2 text-white/40 hover:text-red-400 transition-colors"
+                        className="self-start touch-target text-white/40 hover:text-red-400 transition-colors"
                         aria-label="Remove"
                       >
                         <FiTrash2 size={18} />
@@ -106,9 +106,9 @@ const Cart = () => {
                       placeholder="Coupon code"
                       value={coupon}
                       onChange={(e) => setCoupon(e.target.value)}
-                      className="flex-1 px-4 py-2.5 bg-black/50 border border-white/10 rounded-xl text-sm focus:outline-none focus:border-gold/50"
+                      className="flex-1 px-4 py-2.5 bg-black/50 border border-white/10 rounded-xl text-base focus:outline-none focus:border-gold/50"
                     />
-                    <button type="button" onClick={applyCoupon} className="px-4 py-2.5 border border-gold/30 rounded-xl text-gold text-sm hover:bg-gold/10">
+                    <button type="button" onClick={applyCoupon} className="touch-target px-4 border border-gold/30 rounded-xl text-gold text-sm hover:bg-gold/10">
                       <FiTag />
                     </button>
                   </div>

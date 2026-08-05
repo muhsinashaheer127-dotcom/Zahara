@@ -111,35 +111,35 @@ const Navbar = () => {
         </ul>
 
         {/* Right Auth / Action Section */}
-        <div className="flex items-center gap-3 md:gap-4">
+        <div className="flex items-center gap-2 sm:gap-3 md:gap-4">
           {isAuthenticated ? (
             <>
               {/* Notifications Icon */}
               <button
                 type="button"
                 onClick={() => setUnreadNotifications(0)}
-                className="relative p-2 text-white/80 hover:text-[#D4AF37] transition-colors"
+                className="relative p-2.5 min-h-[44px] min-w-[44px] flex items-center justify-center text-white/80 hover:text-[#D4AF37] transition-colors"
                 aria-label="Notifications"
                 title="Notifications"
               >
                 <FiBell size={20} />
                 {unreadNotifications > 0 && (
-                  <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-[#D4AF37] animate-ping" />
+                  <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#D4AF37] animate-ping" />
                 )}
                 {unreadNotifications > 0 && (
-                  <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-[#D4AF37]" />
+                  <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#D4AF37]" />
                 )}
               </button>
 
               {/* Wishlist Icon */}
               <Link
                 to="/wishlist"
-                className="relative p-2 text-white/80 hover:text-[#D4AF37] transition-colors"
+                className="relative p-2.5 min-h-[44px] min-w-[44px] flex items-center justify-center text-white/80 hover:text-[#D4AF37] transition-colors"
                 aria-label="Wishlist"
               >
                 <FiHeart size={20} />
                 {wishlist.length > 0 && (
-                  <span className="absolute -top-0.5 -right-0.5 bg-[#D4AF37] text-black text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center shadow-md">
+                  <span className="absolute top-1 right-1 bg-[#D4AF37] text-black text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center shadow-md">
                     {wishlist.length}
                   </span>
                 )}
@@ -148,12 +148,12 @@ const Navbar = () => {
               {/* Cart Icon */}
               <Link
                 to="/cart"
-                className="relative p-2 text-white/80 hover:text-[#D4AF37] transition-colors"
+                className="relative p-2.5 min-h-[44px] min-w-[44px] flex items-center justify-center text-white/80 hover:text-[#D4AF37] transition-colors"
                 aria-label="Cart"
               >
                 <FiShoppingBag size={20} />
                 {cartItems.length > 0 && (
-                  <span className="absolute -top-0.5 -right-0.5 bg-[#D4AF37] text-black text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center shadow-md">
+                  <span className="absolute top-1 right-1 bg-[#D4AF37] text-black text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center shadow-md">
                     {cartItems.length}
                   </span>
                 )}
@@ -164,7 +164,7 @@ const Navbar = () => {
                 <button
                   type="button"
                   onClick={() => setDropdownOpen(!dropdownOpen)}
-                  className="flex items-center gap-2 p-1 pl-1.5 pr-3 bg-white/5 hover:bg-white/10 border border-[#D4AF37]/30 rounded-full transition-all duration-300 group"
+                  className="flex items-center gap-2 p-1.5 pl-2 pr-3 min-h-[44px] bg-white/5 hover:bg-white/10 border border-[#D4AF37]/30 rounded-full transition-all duration-300 group"
                   aria-label="User menu"
                 >
                   {user?.avatar ? (
@@ -213,7 +213,7 @@ const Navbar = () => {
                               key={item.label}
                               to={item.path}
                               onClick={() => setDropdownOpen(false)}
-                              className="flex items-center gap-3 px-3 py-2 text-xs text-white/70 hover:text-[#D4AF37] hover:bg-white/5 rounded-xl transition-colors"
+                              className="flex items-center gap-3 px-3 py-2.5 text-xs text-white/70 hover:text-[#D4AF37] hover:bg-white/5 rounded-xl transition-colors min-h-[44px]"
                             >
                               <IconComponent size={15} className="text-[#D4AF37]" />
                               <span>{item.label}</span>
@@ -227,7 +227,7 @@ const Navbar = () => {
                         <button
                           type="button"
                           onClick={handleLogout}
-                          className="w-full flex items-center gap-3 px-3 py-2 text-xs text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-xl transition-colors"
+                          className="w-full flex items-center gap-3 px-3 py-2.5 text-xs text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-xl transition-colors min-h-[44px]"
                         >
                           <FiLogOut size={15} />
                           <span>Logout</span>
@@ -243,13 +243,13 @@ const Navbar = () => {
             <div className="flex items-center gap-2">
               <Link
                 to="/login"
-                className="px-4 py-2 text-xs font-semibold text-[#D4AF37] border border-[#D4AF37]/40 rounded-full hover:bg-[#D4AF37]/10 transition-all duration-300"
+                className="px-4 py-2.5 min-h-[44px] flex items-center justify-center text-xs font-semibold text-[#D4AF37] border border-[#D4AF37]/40 rounded-full hover:bg-[#D4AF37]/10 transition-all duration-300"
               >
                 Login
               </Link>
               <Link
                 to="/register"
-                className="hidden sm:inline-block px-4 py-2 text-xs font-semibold text-black bg-[#D4AF37] hover:bg-[#C79A2B] rounded-full transition-all duration-300 shadow-md"
+                className="hidden sm:flex items-center justify-center px-4 py-2.5 min-h-[44px] text-xs font-semibold text-black bg-[#D4AF37] hover:bg-[#C79A2B] rounded-full transition-all duration-300 shadow-md"
               >
                 Register
               </Link>
@@ -259,7 +259,7 @@ const Navbar = () => {
           {/* Mobile Menu Button */}
           <button
             type="button"
-            className="lg:hidden p-2 text-[#D4AF37]"
+            className="lg:hidden p-2.5 min-h-[44px] min-w-[44px] flex items-center justify-center text-[#D4AF37]"
             onClick={() => setIsOpen(!isOpen)}
             aria-label="Toggle menu"
           >
@@ -277,13 +277,13 @@ const Navbar = () => {
             exit={{ height: 0, opacity: 0 }}
             className="lg:hidden overflow-hidden bg-[#0F0F0F]/95 backdrop-blur-2xl border-t border-[#D4AF37]/20"
           >
-            <ul className="px-6 py-6 space-y-4">
+            <ul className="px-6 py-6 space-y-2">
               {NAV_LINKS.map((link) => (
                 <li key={link.path}>
                   <Link
                     to={link.path}
                     onClick={() => setIsOpen(false)}
-                    className="block text-base text-white/90 hover:text-[#D4AF37] transition-colors"
+                    className="flex items-center text-base text-white/90 hover:text-[#D4AF37] transition-colors min-h-[44px]"
                   >
                     {link.label}
                   </Link>
@@ -306,32 +306,32 @@ const Navbar = () => {
                       <Link
                         to="/profile"
                         onClick={() => setIsOpen(false)}
-                        className="text-center py-2 px-3 bg-white/5 rounded-xl text-xs text-white"
+                        className="flex items-center justify-center py-2.5 px-3 bg-white/5 rounded-xl text-xs text-white min-h-[44px]"
                       >
                         Profile
                       </Link>
                       <button
                         type="button"
                         onClick={handleLogout}
-                        className="text-center py-2 px-3 bg-red-500/10 text-red-400 rounded-xl text-xs"
+                        className="flex items-center justify-center py-2.5 px-3 bg-red-500/10 text-red-400 rounded-xl text-xs min-h-[44px]"
                       >
                         Logout
                       </button>
                     </div>
                   </div>
                 ) : (
-                  <div className="flex flex-col gap-2">
+                  <div className="flex flex-col gap-2 pt-1">
                     <Link
                       to="/login"
                       onClick={() => setIsOpen(false)}
-                      className="w-full text-center py-2.5 border border-[#D4AF37]/40 text-[#D4AF37] rounded-xl text-sm font-semibold"
+                      className="w-full flex items-center justify-center py-3 min-h-[44px] border border-[#D4AF37]/40 text-[#D4AF37] rounded-xl text-sm font-semibold"
                     >
                       Login
                     </Link>
                     <Link
                       to="/register"
                       onClick={() => setIsOpen(false)}
-                      className="w-full text-center py-2.5 bg-[#D4AF37] text-black rounded-xl text-sm font-semibold"
+                      className="w-full flex items-center justify-center py-3 min-h-[44px] bg-[#D4AF37] text-black rounded-xl text-sm font-semibold"
                     >
                       Register
                     </Link>

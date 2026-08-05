@@ -7,10 +7,10 @@ const About = () => (
     <SEO title="About Us" description="Learn about Zahara - premium luxury jewellery rentals." />
     <div className="section-padding">
       <div className="max-w-4xl mx-auto">
-        <AnimateOnScroll className="text-center mb-16">
-          <p className="text-gold tracking-[0.3em] uppercase text-sm mb-3">Our Story</p>
-          <h1 className="text-4xl md:text-5xl font-bold mb-6">About Zahara</h1>
-          <p className="text-white/60 leading-relaxed text-lg">
+        <AnimateOnScroll className="text-center mb-10 md:mb-16">
+          <p className="text-gold tracking-[0.3em] uppercase text-xs md:text-sm mb-3">Our Story</p>
+          <h1 className="text-3xl md:text-5xl font-bold mb-6">About Zahara</h1>
+          <p className="text-white/60 leading-relaxed text-base md:text-lg">
             Zahara was born from a simple belief: every woman deserves to shine in exquisite jewellery, without the burden of ownership.
           </p>
         </AnimateOnScroll>

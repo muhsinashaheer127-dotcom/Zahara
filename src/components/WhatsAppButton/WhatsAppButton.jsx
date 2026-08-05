@@ -9,7 +9,7 @@ const WhatsAppButton = () => (
     aria-label="Chat on WhatsApp"
     style={{ animationDuration: '2s' }}
   >
-    <FaWhatsapp size={28} />
+    <FaWhatsapp size={16} />
   </a>
 )
 

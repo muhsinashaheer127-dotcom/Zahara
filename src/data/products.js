@@ -428,12 +428,7 @@ export const HERO_SLIDES = [
     title: "Modern Luxury",
     subtitle: "Statement pieces for every occasion",
   },
-  {
-    type: "image",
-    image: IMAGES.hero3,
-    title: "Heritage Craft",
-    subtitle: "Temple & traditional jewellery",
-  },
+
 ];
 export const ADMIN_STATS = [
   { label: 'Total Revenue', value: '₹12.4L', change: '+12%' },

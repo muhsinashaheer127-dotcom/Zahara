@@ -29,13 +29,13 @@ const WhyChoose = () => (
             <img
               src="https://res.cloudinary.com/nmrxsjhh/image/upload/f_auto,q_auto/681698900_17869412355611841_1763960844887710419_n_i9ibsp"
               alt="Luxury jewellery"
-              className="w-full h-[400px] md:h-[500px] object-cover"
+              className="w-full h-[280px] sm:h-[400px] md:h-[500px] object-cover"
               loading="lazy"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
-            <div className="absolute bottom-8 left-8 right-8">
-              <p className="text-gold text-sm tracking-widest uppercase mb-2">Since 2025</p>
-              <p className="text-2xl font-[family-name:var(--font-heading)] font-bold">Trusted by 10,000+ Happy Clients</p>
+            <div className="absolute bottom-4 left-4 right-4 sm:bottom-8 sm:left-8 sm:right-8">
+              <p className="text-gold text-xs sm:text-sm tracking-widest uppercase mb-1.5 sm:mb-2">Since 2025</p>
+              <p className="text-lg sm:text-2xl font-[family-name:var(--font-heading)] font-bold">Trusted by 500+ Happy Clients</p>
             </div>
           </div>
         </AnimateOnScroll>

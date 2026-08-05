@@ -23,9 +23,9 @@ const Bookings = () => {
       <SEO title="My Bookings" />
       <div className="section-padding">
         <div className="max-w-4xl mx-auto">
-          <AnimateOnScroll className="mb-12">
-            <h1 className="text-4xl font-bold mb-2">My Bookings</h1>
-            <p className="text-white/60">{bookings.length} bookings</p>
+          <AnimateOnScroll className="mb-8 md:mb-12">
+            <h1 className="text-3xl md:text-4xl font-bold mb-2">My Bookings</h1>
+            <p className="text-white/60 text-sm md:text-base">{bookings.length} bookings</p>
           </AnimateOnScroll>
 
           {bookings.length > 0 ? (

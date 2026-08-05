@@ -87,7 +87,7 @@ const OTPVerification = () => {
 
       <form onSubmit={handleVerify} className="space-y-6">
         {/* 6 Digit Input Grid */}
-        <div className="flex items-center justify-between gap-2 sm:gap-3" onPaste={handlePaste}>
+        <div className="flex items-center justify-between gap-1.5 sm:gap-3" onPaste={handlePaste}>
           {otp.map((digit, idx) => (
             <input
               key={idx}
@@ -98,7 +98,7 @@ const OTPVerification = () => {
               value={digit}
               onChange={(e) => handleChange(idx, e.target.value)}
               onKeyDown={(e) => handleKeyDown(idx, e)}
-              className="w-11 h-14 sm:w-14 sm:h-16 text-center text-xl font-bold text-[#111111] bg-white border border-stone-200 rounded-xl focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/30 shadow-sm outline-none transition-all duration-200"
+              className="w-11 h-14 sm:w-14 sm:h-16 text-center text-xl font-bold text-[#111111] bg-white border border-stone-200 rounded-xl focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/30 shadow-sm outline-none transition-all duration-200 text-base"
             />
           ))}
         </div>
@@ -116,7 +116,7 @@ const OTPVerification = () => {
             <button
               type="button"
               onClick={handleResend}
-              className="font-semibold text-[#111111] hover:text-[#C49A3A] underline cursor-pointer"
+              className="font-semibold text-[#111111] hover:text-[#C49A3A] underline cursor-pointer min-h-[44px] px-2"
             >
               Didn&apos;t receive the code? Resend OTP
             </button>

@@ -14,9 +14,9 @@ const Wishlist = () => {
       <SEO title="Wishlist" />
       <div className="section-padding">
         <div className="max-w-7xl mx-auto">
-          <AnimateOnScroll className="mb-12">
-            <h1 className="text-4xl font-bold mb-2">My Wishlist</h1>
-            <p className="text-white/60">{wishlist.length} saved items</p>
+          <AnimateOnScroll className="mb-8 md:mb-12">
+            <h1 className="text-3xl md:text-4xl font-bold mb-2">My Wishlist</h1>
+            <p className="text-white/60 text-sm md:text-base">{wishlist.length} saved items</p>
           </AnimateOnScroll>
 
           {wishlist.length > 0 ? (
@@ -36,14 +36,14 @@ const Wishlist = () => {
                         <button
                           type="button"
                           onClick={() => addToCart(product)}
-                          className="flex-1 py-2.5 gold-gradient text-black text-sm font-semibold rounded-xl flex items-center justify-center gap-2"
+                          className="flex-1 min-h-[44px] gold-gradient text-black text-sm font-semibold rounded-xl flex items-center justify-center gap-2"
                         >
                           <FiShoppingBag size={14} /> Rent Now
                         </button>
                         <button
                           type="button"
                           onClick={() => removeFromWishlist(product.id)}
-                          className="p-2.5 border border-white/20 rounded-xl hover:border-red-400 hover:text-red-400 transition-colors"
+                          className="touch-target border border-white/20 rounded-xl hover:border-red-400 hover:text-red-400 transition-colors"
                           aria-label="Remove"
                         >
                           <FiTrash2 size={16} />

@@ -5,13 +5,13 @@ const InputField = forwardRef(
     return (
       <div className="w-full text-left mb-4">
         {label && (
-          <label className="block text-[11px] font-semibold text-white/50 uppercase tracking-[0.12em] mb-2">
+          <label className="block text-[12px] font-medium text-[#D4AF37] tracking-wide mb-1.5">
             {label}
           </label>
         )}
         <div className="relative flex items-center group">
           {Icon && (
-            <div className="absolute left-4 text-[#C49A3A] pointer-events-none z-10 transition-colors duration-300 group-focus-within:text-[#D4AF37]">
+            <div className="absolute left-3.5 text-[#D4AF37]/80 pointer-events-none z-10 transition-colors duration-300 group-focus-within:text-[#D4AF37] group-focus-within:scale-110 transform">
               <Icon size={17} />
             </div>
           )}
@@ -19,18 +19,18 @@ const InputField = forwardRef(
             ref={ref}
             type={type}
             placeholder={placeholder}
-            className={`w-full ${Icon ? 'pl-11' : 'pl-4'} pr-4 py-3.5 text-white text-sm rounded-xl border outline-none transition-all duration-300 placeholder:text-white/25 ${
+            className={`w-full ${Icon ? 'pl-11' : 'pl-4'} pr-4 py-3 text-white text-sm rounded-xl border outline-none transition-all duration-300 bg-[#121212]/90 placeholder:text-white/30 ${
               error
-                ? 'bg-red-500/5 border-red-500/60 focus:ring-2 focus:ring-red-500/20 focus:border-red-500'
-                : 'bg-white/[0.04] border-white/10 hover:border-white/20 focus:border-[#D4AF37]/70 focus:ring-2 focus:ring-[#D4AF37]/15 focus:bg-white/[0.06]'
+                ? 'border-red-500/70 focus:border-red-500 focus:ring-1 focus:ring-red-500/40'
+                : 'border-white/15 hover:border-white/30 focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37]/50 focus:shadow-[0_0_20px_rgba(212,175,55,0.25)]'
             } ${className}`}
             style={{ fontFamily: 'Poppins, sans-serif' }}
             {...props}
           />
         </div>
         {error && (
-          <p className="mt-1.5 text-xs text-red-400 font-medium flex items-center gap-1.5">
-            <span className="inline-block w-1 h-1 rounded-full bg-red-400 flex-shrink-0" />
+          <p className="mt-1 text-xs text-red-400 font-medium flex items-center gap-1.5">
+            <span className="inline-block w-1.5 h-1.5 rounded-full bg-red-400 flex-shrink-0" />
             {error}
           </p>
         )}

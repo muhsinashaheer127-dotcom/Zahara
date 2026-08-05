@@ -16,8 +16,7 @@ const Collections = () => {
     search: '',
     category: searchParams.get('category') || 'all',
     occasion: 'all',
-    priceMin: '',
-    priceMax: '',
+    priceRange: 'all',
     sortBy: searchParams.get('sort') || 'newest',
   })
 
@@ -40,10 +39,10 @@ const Collections = () => {
       <SEO title="Collections" description="Browse our premium jewellery rental collections." />
       <div className="section-padding">
         <div className="max-w-7xl mx-auto">
-          <AnimateOnScroll className="text-center mb-12">
-            <p className="text-gold tracking-[0.3em] uppercase text-sm mb-3">Our Collection</p>
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">Luxury Collections</h1>
-            <p className="text-white/60 max-w-2xl mx-auto">
+          <AnimateOnScroll className="text-center mb-8 md:mb-12">
+            <p className="text-gold tracking-[0.3em] uppercase text-xs md:text-sm mb-3">Our Collection</p>
+            <h1 className="text-3xl md:text-5xl font-bold mb-4">Luxury Collections</h1>
+            <p className="text-white/60 text-sm md:text-base max-w-2xl mx-auto">
               Discover handpicked pieces for every occasion. Filter by category, occasion, or price to find your perfect match.
             </p>
           </AnimateOnScroll>
@@ -70,8 +69,8 @@ const Collections = () => {
               <p className="text-white/60 text-lg">No products match your filters.</p>
               <button
                 type="button"
-                onClick={() => setFilters({ search: '', category: 'all', occasion: 'all', priceMin: '', priceMax: '', sortBy: 'newest' })}
-                className="mt-4 text-gold hover:underline"
+                onClick={() => setFilters({ search: '', category: 'all', occasion: 'all', priceRange: 'all', sortBy: 'newest' })}
+                className="mt-4 text-gold hover:underline touch-target mx-auto"
               >
                 Clear all filters
               </button>

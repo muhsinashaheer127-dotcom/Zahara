@@ -60,8 +60,8 @@ const Checkout = () => {
       <SEO title="Checkout" />
       <div className="section-padding">
         <div className="max-w-6xl mx-auto">
-          <AnimateOnScroll className="mb-12">
-            <h1 className="text-4xl font-bold">Checkout</h1>
+          <AnimateOnScroll className="mb-8 md:mb-12">
+            <h1 className="text-3xl md:text-4xl font-bold">Checkout</h1>
           </AnimateOnScroll>
 
           <form onSubmit={handleWhatsAppEnquiry} className="grid lg:grid-cols-3 gap-8">
@@ -78,7 +78,7 @@ const Checkout = () => {
                       value={form[field]}
                       onChange={handleChange}
                       required
-                      className="px-4 py-3 bg-black/50 border border-white/10 rounded-xl focus:outline-none focus:border-gold/50 capitalize"
+                      className="px-4 py-3 bg-black/50 border border-white/10 rounded-xl focus:outline-none focus:border-gold/50 text-base"
                     />
                   ))}
                   <textarea
@@ -88,7 +88,7 @@ const Checkout = () => {
                     onChange={handleChange}
                     required
                     rows={3}
-                    className="sm:col-span-2 px-4 py-3 bg-black/50 border border-white/10 rounded-xl focus:outline-none focus:border-gold/50 resize-none"
+                    className="sm:col-span-2 px-4 py-3 bg-black/50 border border-white/10 rounded-xl focus:outline-none focus:border-gold/50 resize-none text-base"
                   />
                 </div>
               </div>

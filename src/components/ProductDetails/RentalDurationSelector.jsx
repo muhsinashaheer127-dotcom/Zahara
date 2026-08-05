@@ -10,7 +10,7 @@ const RentalDurationSelector = ({ duration, setDuration, durationOptions = [3, 5
             key={days}
             type="button"
             onClick={() => setDuration(days)}
-            className={`px-4 py-2 rounded-full border text-sm transition-all ${
+            className={`px-4 min-h-[44px] rounded-full border text-sm transition-all ${
               duration === days
                 ? 'border-gold bg-gold/10 text-gold'
                 : 'border-white/20 hover:border-gold/50 text-white/80'
@@ -25,7 +25,7 @@ const RentalDurationSelector = ({ duration, setDuration, durationOptions = [3, 5
         <button
           type="button"
           onClick={() => setDuration(Math.max(3, duration - 1))}
-          className="p-2 border border-white/20 rounded-lg hover:border-gold text-white/80 hover:text-gold transition-all"
+          className="touch-target border border-white/20 rounded-lg hover:border-gold text-white/80 hover:text-gold transition-all"
         >
           <FiMinus />
         </button>
@@ -33,7 +33,7 @@ const RentalDurationSelector = ({ duration, setDuration, durationOptions = [3, 5
         <button
           type="button"
           onClick={() => setDuration(duration + 1)}
-          className="p-2 border border-white/20 rounded-lg hover:border-gold text-white/80 hover:text-gold transition-all"
+          className="touch-target border border-white/20 rounded-lg hover:border-gold text-white/80 hover:text-gold transition-all"
         >
           <FiPlus />
         </button>

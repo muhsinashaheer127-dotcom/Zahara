@@ -20,10 +20,12 @@
 
   html {
     scroll-behavior: smooth;
+    overflow-x: hidden;
   }
 
   body {
     @apply bg-[#111111] text-white font-[family-name:var(--font-body)] antialiased selection:bg-gold selection:text-black;
+    overflow-x: hidden;
   }
 
   h1,
@@ -62,7 +64,11 @@
   }
 
   .section-padding {
-    @apply px-4 sm:px-6 lg:px-8 py-16 md:py-24;
+    @apply px-4 sm:px-6 lg:px-8 py-10 sm:py-16 md:py-24;
+  }
+
+  .touch-target {
+    @apply min-h-[44px] min-w-[44px] flex items-center justify-center;
   }
 }
 

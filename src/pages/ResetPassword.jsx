@@ -8,7 +8,6 @@ import toast from 'react-hot-toast'
 import AuthLayout from '../components/auth/AuthLayout'
 import AuthHeader from '../components/auth/AuthHeader'
 import PasswordField from '../components/auth/PasswordField'
-import PasswordStrength from '../components/auth/PasswordStrength'
 import Button from '../components/auth/Button'
 import FeatureSection from '../components/auth/FeatureSection'
 import SEO from '../components/SEO'
@@ -16,11 +15,7 @@ import SEO from '../components/SEO'
 const schema = yup.object({
   password: yup
     .string()
-    .min(8, 'Password must be at least 8 characters')
-    .matches(/[A-Z]/, 'Password must contain at least one uppercase letter')
-    .matches(/[a-z]/, 'Password must contain at least one lowercase letter')
-    .matches(/[0-9]/, 'Password must contain at least one number')
-    .matches(/[^A-Za-z0-9]/, 'Password must contain at least one special character')
+    .min(4, 'Password must be at least 4 characters')
     .required('New password is required'),
   confirmPassword: yup
     .string()
@@ -35,31 +30,32 @@ const ResetPassword = () => {
   const {
     register,
     handleSubmit,
-    watch,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
   })
 
-  const watchPassword = watch('password', '')
-
   const onSubmit = async (data) => {
     setLoading(true)
-    setTimeout(() => {
-      setLoading(false)
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 800))
       toast.success('Your password has been reset successfully. Please sign in.', { icon: '🔒' })
       navigate('/login')
-    }, 1200)
+    } catch (err) {
+      toast.error('Failed to reset password. Please try again.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
-    <AuthLayout badgeText="Set New Credentials">
+    <AuthLayout badgeText="Security Update">
       <SEO title="Reset Password | Zahara Luxury Rentals" description="Create a new password for your account." />
 
       <AuthHeader
         title="CREATE NEW PASSWORD"
         subtitle="Secure Credentials"
-        description="Choose a strong, unique password to secure your Zahara account."
+        description="Choose a new password to secure your Zahara account."
       />
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-2">
@@ -69,8 +65,6 @@ const ResetPassword = () => {
           error={errors.password?.message}
           {...register('password')}
         />
-
-        {watchPassword && <PasswordStrength password={watchPassword} />}
 
         <PasswordField
           label="Confirm New Password"

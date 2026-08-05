@@ -90,7 +90,7 @@ const Profile = () => {
             <button
               type="button"
               onClick={handleLogout}
-              className="flex items-center gap-2 px-5 py-2.5 bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-semibold rounded-full hover:bg-red-500 hover:text-white transition-all duration-300 shadow-md"
+              className="flex items-center gap-2 px-5 py-3 bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-semibold rounded-full hover:bg-red-500 hover:text-white transition-all duration-300 shadow-md min-h-[44px]"
             >
               <FiLogOut size={16} /> Logout Session
             </button>
@@ -238,7 +238,7 @@ const Profile = () => {
                         value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                         required
-                        className="w-full pl-11 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white text-sm focus:border-[#D4AF37] outline-none"
+                        className="w-full pl-11 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white text-base focus:border-[#D4AF37] outline-none"
                       />
                     </div>
                   </div>
@@ -272,7 +272,7 @@ const Profile = () => {
                         value={formData.phone}
                         onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                         placeholder="+91 98765 43210"
-                        className="w-full pl-11 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white text-sm focus:border-[#D4AF37] outline-none"
+                        className="w-full pl-11 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white text-base focus:border-[#D4AF37] outline-none"
                       />
                     </div>
                   </div>
@@ -289,7 +289,7 @@ const Profile = () => {
                         value={formData.avatar}
                         onChange={(e) => setFormData({ ...formData, avatar: e.target.value })}
                         placeholder="https://..."
-                        className="w-full pl-11 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white text-sm focus:border-[#D4AF37] outline-none"
+                        className="w-full pl-11 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white text-base focus:border-[#D4AF37] outline-none"
                       />
                     </div>
                   </div>
@@ -306,7 +306,7 @@ const Profile = () => {
                         value={formData.address}
                         onChange={(e) => setFormData({ ...formData, address: e.target.value })}
                         placeholder="Enter your full street address, city, and pincode..."
-                        className="w-full pl-11 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white text-sm focus:border-[#D4AF37] outline-none resize-none"
+                        className="w-full pl-11 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white text-base focus:border-[#D4AF37] outline-none resize-none"
                       />
                     </div>
                   </div>
@@ -337,13 +337,13 @@ const Profile = () => {
                   <button
                     type="button"
                     onClick={() => setIsEditing(false)}
-                    className="px-5 py-2.5 bg-white/5 border border-white/10 text-white/70 text-xs font-semibold rounded-xl hover:text-white"
+                    className="px-5 min-h-[44px] bg-white/5 border border-white/10 text-white/70 text-xs font-semibold rounded-xl hover:text-white"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="flex items-center gap-2 px-6 py-2.5 bg-[#D4AF37] text-black font-semibold text-xs rounded-xl hover:bg-[#C79A2B] transition-all shadow-lg"
+                    className="flex items-center gap-2 px-6 min-h-[44px] bg-[#D4AF37] text-black font-semibold text-xs rounded-xl hover:bg-[#C79A2B] transition-all shadow-lg"
                   >
                     <FiCheck size={16} /> Save Changes
                   </button>

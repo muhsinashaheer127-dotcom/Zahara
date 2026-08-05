@@ -43,12 +43,12 @@ const Newsletter = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your email"
-                className="flex-1 px-5 py-3.5 bg-black/50 border border-gold/30 rounded-full text-white placeholder:text-white/40 focus:outline-none focus:border-gold transition-colors"
+                className="flex-1 px-5 py-3.5 bg-black/50 border border-gold/30 rounded-full text-white text-base placeholder:text-white/40 focus:outline-none focus:border-gold transition-colors min-h-[44px]"
               />
               <button
                 type="submit"
                 disabled={loading}
-                className="px-8 py-3.5 gold-gradient text-black font-semibold rounded-full hover:opacity-90 transition-opacity flex items-center justify-center gap-2 disabled:opacity-50"
+                className="px-8 py-3.5 gold-gradient text-black font-semibold rounded-full hover:opacity-90 transition-opacity flex items-center justify-center gap-2 disabled:opacity-50 min-h-[44px] w-full sm:w-auto"
               >
                 {loading ? 'Subscribing...' : 'Subscribe'}
                 <FiSend size={16} />

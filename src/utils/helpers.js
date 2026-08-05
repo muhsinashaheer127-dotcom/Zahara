@@ -39,12 +39,33 @@ export const filterProducts = (products, filters) => {
     result = result.filter((p) => p.occasion === filters.occasion)
   }
 
-  if (filters.priceMin) {
-    result = result.filter((p) => p.price >= Number(filters.priceMin))
-  }
+  switch (filters.priceRange) {
+    case "0-500":
+      result = result.filter((p) => p.price >= 0 && p.price <= 500);
+      break;
 
-  if (filters.priceMax) {
-    result = result.filter((p) => p.price <= Number(filters.priceMax))
+    case "500-1000":
+      result = result.filter((p) => p.price >= 500 && p.price <= 1000);
+      break;
+
+    case "1000-2000":
+      result = result.filter((p) => p.price >= 1000 && p.price <= 2000);
+      break;
+
+    case "2000-3000":
+      result = result.filter((p) => p.price >= 2000 && p.price <= 3000);
+      break;
+
+    case "3000-5000":
+      result = result.filter((p) => p.price >= 3000 && p.price <= 5000);
+      break;
+
+    case "5000+":
+      result = result.filter((p) => p.price >= 5000);
+      break;
+
+    default:
+      break;
   }
 
   switch (filters.sortBy) {
