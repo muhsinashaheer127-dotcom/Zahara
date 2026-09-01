@@ -11,22 +11,19 @@ const CHECKLIST_ITEMS = [
 ]
 
 const AVATARS = [
-  'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80',
-  'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80',
-  'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&q=80',
-  'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80',
+
 ]
 
 const AuthLayout = ({ children }) => {
   return (
     <div className="min-h-screen bg-[#0A0A0A] text-white flex flex-col font-[family-name:var(--font-body)] overflow-x-hidden selection:bg-[#D4AF37] selection:text-black relative">
-      
+
       {/* Container Split Layout */}
       <div className="flex-1 flex flex-col lg:flex-row min-h-screen">
-        
+
         {/* ── LEFT SIDE (60%) — CINEMATIC LUXURY HERO ── */}
         <div className="lg:w-[58%] xl:w-[60%] relative flex flex-col justify-between p-6 sm:p-10 lg:p-14 xl:p-16 overflow-hidden min-h-[480px] lg:min-h-screen">
-          
+
           {/* High-Res Cinematic Luxury Jewellery Background Image */}
           <div className="absolute inset-0 z-0 overflow-hidden">
             <motion.img
@@ -50,7 +47,11 @@ const AuthLayout = ({ children }) => {
           <div className="relative z-20 flex items-center gap-3.5">
             <Link to="/" className="flex items-center gap-3.5 group">
               <div className="h-11 w-11 rounded-full border border-[#D4AF37]/80 flex items-center justify-center bg-black/60 shadow-[0_0_20px_rgba(212,175,55,0.3)] group-hover:scale-105 transition-transform duration-300">
-                <span className="text-[#D4AF37] font-bold text-xl font-[family-name:var(--font-heading)]">Z</span>
+                <img
+                  src="/logo.png"
+                  alt="Zahara"
+                  className="h-10 w-10 md:h-12 md:w-12 rounded-full object-cover transition-transform group-hover:scale-105 border border-[#D4AF37]/40"
+                />
               </div>
               <div>
                 <span className="font-[family-name:var(--font-heading)] text-2xl font-bold tracking-[0.2em] text-white group-hover:text-[#D4AF37] transition-colors">
@@ -154,7 +155,7 @@ const AuthLayout = ({ children }) => {
 
         {/* ── RIGHT SIDE (40%) — GLASSMORPHISM LUXURY CARD ── */}
         <div className="lg:w-[42%] xl:w-[40%] flex flex-col justify-center items-center p-4 sm:p-8 lg:p-12 relative bg-[#0A0A0A] z-10 min-h-screen">
-          
+
           {/* Radial gold ambient backlight behind card */}
           <div
             className="absolute inset-0 pointer-events-none"

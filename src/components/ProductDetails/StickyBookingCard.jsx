@@ -5,6 +5,11 @@ import { formatPrice } from '../../utils/helpers'
 const StickyBookingCard = ({ product, duration, quantity, startDate, endDate, rentalTotal, onRent, onWishlist, onShare, inWishlist }) => {
   const whatsappNumber = '9747133559'
   
+  const isUnavailable =
+    product.availability === 'out_of_stock' ||
+    product.availability === 'unavailable' ||
+    product.availableQuantity === 0
+
   const handleWhatsAppEnquiry = () => {
     const message = `Hello Zahara, I am interested in the ${product.name}. Please share availability, rental price, and booking details.\n\nProduct Code: ${product.id}\nRental Price: ${formatPrice(product.price)}\nRental Duration: ${duration} days\nSelected Dates: ${startDate || 'Not selected'} to ${endDate || 'Not selected'}`
     const encodedMessage = encodeURIComponent(message)
@@ -48,11 +53,11 @@ const StickyBookingCard = ({ product, duration, quantity, startDate, endDate, re
           <span className="font-semibold capitalize">
             {product.availability === 'available' ? 'Available' :
              product.availability === 'limited' ? 'Limited Stock' :
-             'Out of Stock'}
+             'Currently Unavailable'}
           </span>
         </div>
-        <p className="text-sm text-white/50">Available Quantity: {product.availableQuantity}</p>
-        <p className="text-sm text-white/50">Estimated Delivery: {product.estimatedDelivery}</p>
+        <p className="text-sm text-white/50">Available Quantity: {product.availableQuantity || 0}</p>
+        <p className="text-sm text-white/50">Estimated Delivery: {product.estimatedDelivery || '2-3 days'}</p>
       </div>
 
       {/* Selected Dates */}
@@ -76,10 +81,14 @@ const StickyBookingCard = ({ product, duration, quantity, startDate, endDate, re
         <button
           type="button"
           onClick={onRent}
-          disabled={product.availability === 'out_of_stock'}
-          className="w-full py-4 gold-gradient text-black font-semibold rounded-2xl hover:opacity-90 transition-opacity flex items-center justify-center gap-2 luxury-shadow disabled:opacity-50 disabled:cursor-not-allowed"
+          disabled={isUnavailable}
+          className={`w-full py-4 font-semibold rounded-2xl transition-all flex items-center justify-center gap-2 luxury-shadow ${
+            isUnavailable
+              ? 'bg-red-950/80 border border-red-500/30 text-red-300 cursor-not-allowed opacity-90'
+              : 'gold-gradient text-black hover:opacity-90'
+          }`}
         >
-          <FiShoppingBag /> Rent Now
+          <FiShoppingBag /> {isUnavailable ? 'Currently Unavailable' : 'Rent Now'}
         </button>
         
         <div className="flex gap-3">

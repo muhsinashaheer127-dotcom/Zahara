@@ -20,7 +20,6 @@ import { useAuth } from '../../context/AuthContext'
 const NAV_LINKS = [
   { label: 'Home', path: '/' },
   { label: 'Collections', path: '/collections' },
-
   { label: 'About', path: '/about' },
   { label: 'Contact', path: '/contact' },
 ]
@@ -77,8 +76,11 @@ const Navbar = () => {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${scrolled ? 'glass-card shadow-2xl py-3 border-b border-[#D4AF37]/20 bg-[#0F0F0F]/90 backdrop-blur-xl' : 'bg-transparent py-5'
-        }`}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+        scrolled
+          ? 'glass-card shadow-2xl py-3 border-b border-[#D4AF37]/20 bg-[#0F0F0F]/90 backdrop-blur-xl'
+          : 'bg-transparent py-5'
+      }`}
     >
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
         {/* Brand Logo */}
@@ -183,8 +185,9 @@ const Navbar = () => {
                   </span>
                   <FiChevronDown
                     size={14}
-                    className={`text-[#D4AF37] transition-transform duration-300 ${dropdownOpen ? 'rotate-180' : ''
-                      }`}
+                    className={`text-[#D4AF37] transition-transform duration-300 ${
+                      dropdownOpen ? 'rotate-180' : ''
+                    }`}
                   />
                 </button>
 

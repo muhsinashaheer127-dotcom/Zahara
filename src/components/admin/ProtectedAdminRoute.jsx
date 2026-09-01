@@ -1,0 +1,25 @@
+import { Navigate, Outlet } from 'react-router-dom'
+import { useAdminAuth } from '../../hooks/useAdminAuth'
+
+const ProtectedAdminRoute = ({ children }) => {
+  const { isAdminAuthenticated, loading } = useAdminAuth()
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-black flex flex-col items-center justify-center text-gold">
+        <div className="w-12 h-12 border-4 border-gold/20 border-t-gold rounded-full animate-spin mb-4" />
+        <p className="text-xs uppercase tracking-[0.2em] font-medium text-gold/80">
+          Authenticating Zahara Admin...
+        </p>
+      </div>
+    )
+  }
+
+  if (!isAdminAuthenticated) {
+    return <Navigate to="/zahara-admin-login" replace />
+  }
+
+  return children ? children : <Outlet />
+}
+
+export default ProtectedAdminRoute

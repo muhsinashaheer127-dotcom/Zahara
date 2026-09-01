@@ -9,25 +9,42 @@ const ProductCard = ({ product, showBadge = null, onQuickView }) => {
   const { toggleWishlist, isInWishlist, addToCart } = useCart()
   const inWishlist = isInWishlist(product.id)
 
-  const badge = showBadge || (product.isBestSeller ? 'Trending' : product.isNew ? 'New' : null)
+  const isUnavailable =
+    product.availability === 'out_of_stock' ||
+    product.availability === 'unavailable' ||
+    product.availableQuantity === 0
+
+  const badge = isUnavailable
+    ? 'Currently Unavailable'
+    : showBadge || (product.isBestSeller ? 'Trending' : product.isNew ? 'New' : null)
 
   return (
     <motion.div
       whileHover={{ y: -8 }}
       transition={{ duration: 0.3 }}
-      className="group glass-card rounded-2xl overflow-hidden border border-white/5 hover:border-gold/30 transition-all duration-500 luxury-shadow"
+      className={`group glass-card rounded-2xl overflow-hidden border transition-all duration-500 luxury-shadow ${
+        isUnavailable ? 'border-red-500/20 opacity-90' : 'border-white/5 hover:border-gold/30'
+      }`}
     >
       <div className="relative aspect-[3/4] overflow-hidden">
         <Link to={`/product/${product.slug}`}>
           <LazyImage
             src={product.images[0]}
             alt={product.name}
-            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+            className={`w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ${
+              isUnavailable ? 'grayscale-[30%]' : ''
+            }`}
           />
         </Link>
 
         {badge && (
-          <span className="absolute top-3 left-3 sm:top-4 sm:left-4 px-2.5 py-1 sm:px-3 sm:py-1 gold-gradient text-black text-[10px] sm:text-xs font-bold rounded-full uppercase tracking-wider">
+          <span
+            className={`absolute top-3 left-3 sm:top-4 sm:left-4 px-2.5 py-1 sm:px-3 sm:py-1 text-[10px] sm:text-xs font-bold rounded-full uppercase tracking-wider ${
+              isUnavailable
+                ? 'bg-red-500/90 text-white shadow-lg'
+                : 'gold-gradient text-black'
+            }`}
+          >
             {badge}
           </span>
         )}
@@ -58,10 +75,15 @@ const ProductCard = ({ product, showBadge = null, onQuickView }) => {
         <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-4 translate-y-0 sm:translate-y-full sm:group-hover:translate-y-0 transition-transform duration-300">
           <button
             type="button"
-            onClick={() => addToCart(product)}
-            className="w-full py-2.5 sm:py-3 min-h-[44px] gold-gradient text-black text-xs sm:text-sm font-semibold rounded-xl hover:opacity-90 transition-opacity flex items-center justify-center shadow-lg"
+            onClick={() => !isUnavailable && addToCart(product)}
+            disabled={isUnavailable}
+            className={`w-full py-2.5 sm:py-3 min-h-[44px] text-xs sm:text-sm font-semibold rounded-xl transition-all flex items-center justify-center shadow-lg ${
+              isUnavailable
+                ? 'bg-red-950/80 border border-red-500/30 text-red-300 cursor-not-allowed opacity-90'
+                : 'gold-gradient text-black hover:opacity-90'
+            }`}
           >
-            Rent Now
+            {isUnavailable ? 'Currently Unavailable' : 'Rent Now'}
           </button>
         </div>
       </div>

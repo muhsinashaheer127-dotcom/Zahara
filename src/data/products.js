@@ -392,11 +392,12 @@ export const WHY_CHOOSE = [
 ]
 
 export const TESTIMONIALS = [
-  { id: 1, name: 'Priya Sharma', role: 'Bride, Mumbai', rating: 5, text: 'The Royal Emerald set made me feel like royalty on my wedding day. Flawless quality and on-time delivery!' },
-  { id: 2, name: 'Ananya Reddy', role: 'Engagement, Hyderabad', rating: 5, text: 'Zahara made luxury accessible. The booking process was seamless and the jewellery exceeded expectations.' },
-  { id: 3, name: 'Meera Kapoor', role: 'Photoshoot, Delhi', rating: 5, text: 'Perfect for my editorial shoot. Every piece photographed beautifully. Will rent again!' },
-  { id: 4, name: 'Sneha Patel', role: 'Festival, Ahmedabad', rating: 4, text: 'Temple jewellery collection is stunning. Authentic look at a fraction of the purchase price.' },
+  { id: 1, name: 'Aswathy Raju', role: 'Kerala', rating: 5, text: 'Absolutely loved the jewellery from Zahara! The designs were beautiful and looked stunning for my special occasion. The rental process was also very easy.' },
+  { id: 2, name: 'Sanjay Salvan', role: 'Kerala', rating: 5, text: 'Zahara has a beautiful collection with so many elegant designs to choose from. The jewellery looked premium, and the rental price was very reasonable' },
+  { id: 3, name: 'Rizwan', role: 'Kerala', rating: 5, text: 'Had a great experience with Zahara. The jewellery was gorgeous, well-maintained, and perfect for the occasion. Definitely worth renting!' },
+
 ]
+
 
 export const FAQ_DATA = [
   { question: 'How does jewellery rental work?', answer: 'Browse our collection, select your rental dates, pay the rental fee plus a refundable security deposit, and receive your jewellery via doorstep delivery. Return it after your event using our prepaid return kit.' },

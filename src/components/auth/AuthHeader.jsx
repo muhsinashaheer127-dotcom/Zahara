@@ -16,11 +16,15 @@ const AuthHeader = ({
       >
         {/* Soft gold pulsing backlight */}
         <div className="absolute -inset-2 rounded-full bg-gradient-to-r from-[#D4AF37] via-[#F3E5AB] to-[#B8941F] opacity-30 blur-md group-hover:opacity-60 transition duration-700 animate-pulse" />
-        
+
         {/* Emblem circle */}
         <div className="relative h-16 w-16 mx-auto rounded-full bg-[#0A0A0A] border-2 border-[#D4AF37] flex items-center justify-center shadow-[0_0_25px_rgba(212,175,55,0.35)]">
           <span className="font-[family-name:var(--font-heading)] text-2xl font-bold tracking-tight bg-gradient-to-b from-[#FFF] via-[#F3E5AB] to-[#D4AF37] bg-clip-text text-transparent drop-shadow-[0_2px_8px_rgba(212,175,55,0.5)]">
-            Z
+            <img
+              src="/logo.png"
+              alt="Zahara"
+              className="h-10 w-10 md:h-12 md:w-12 rounded-full object-cover transition-transform group-hover:scale-105 border border-[#D4AF37]/40"
+            />
           </span>
         </div>
       </motion.div>
