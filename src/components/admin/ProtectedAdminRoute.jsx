@@ -1,5 +1,6 @@
 import { Navigate, Outlet } from 'react-router-dom'
 import { useAdminAuth } from '../../hooks/useAdminAuth'
+import { isIntentionalLogout } from '../../utils/authSession'
 
 const ProtectedAdminRoute = ({ children }) => {
   const { isAdminAuthenticated, loading } = useAdminAuth()
@@ -16,7 +17,10 @@ const ProtectedAdminRoute = ({ children }) => {
   }
 
   if (!isAdminAuthenticated) {
-    return <Navigate to="/login?redirect=/admin/dashboard" replace />
+    const loginPath = isIntentionalLogout()
+      ? '/login'
+      : '/login?redirect=/admin/dashboard'
+    return <Navigate to={loginPath} replace />
   }
 
   return children ? children : <Outlet />

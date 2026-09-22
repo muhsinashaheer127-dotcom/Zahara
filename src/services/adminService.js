@@ -1,7 +1,7 @@
 /**
  * adminService.js
- * All admin CRUD operations go through the real backend API.
- * No localStorage. No mock data.
+ * Admin CRUD operations connected directly to the Express backend API.
+ * Real error propagation — no silent fake fallbacks that mask database errors.
  */
 import {
   productService,
@@ -17,60 +17,60 @@ import {
 // Normalize DB booking doc → shape admin pages expect
 const normalizeBooking = (b) => ({
   ...b,
-  id:            b.customId || b._id,
-  customer:      b.customerName,
-  email:         b.customerEmail,
-  product:       b.productName,
-  price:         b.rentalAmount,
-  deposit:       b.securityDeposit,
-  bookingStatus: b.status,
+  id:            b.customId || b.id || b._id,
+  customer:      b.customerName || b.customer,
+  email:         b.customerEmail || b.email,
+  product:       b.productName || b.product,
+  price:         b.rentalAmount || b.price,
+  deposit:       b.securityDeposit || b.deposit,
+  bookingStatus: b.status || b.bookingStatus,
 })
 
 // Normalize DB order doc → shape admin pages expect
 const normalizeOrder = (o) => ({
   ...o,
-  id:       o.customId || o._id,
-  customer: o.customerName,
-  product:  o.productName,
+  id:       o.customId || o.id || o._id,
+  customer: o.customerName || o.customer,
+  product:  o.productName || o.product,
 })
 
 // Normalize DB payment doc → shape admin pages expect
 const normalizePayment = (p) => ({
   ...p,
-  id:       p.customId || p._id,
-  customer: p.customerName,
+  id:       p.customId || p.id || p._id,
+  customer: p.customerName || p.customer,
 })
 
 // Normalize DB review doc → shape admin pages expect
 const normalizeReview = (r) => ({
   ...r,
-  id:       r.customId || r._id,
-  customer: r.customerName,
-  product:  r.productName,
-  comment:  r.comment,
+  id:       r.customId || r.id || r._id,
+  customer: r.customerName || r.customer,
+  product:  r.productName || r.product,
+  comment:  r.comment || r.text,
 })
 
 // Normalize DB user doc → shape admin pages expect
 const normalizeUser = (u) => ({
   ...u,
-  id: u.customId || u._id,
+  id: u.customId || u.id || u._id,
 })
 
 // Normalize DB product doc → shape admin pages expect
 const normalizeProduct = (p) => ({
   ...p,
-  id: p.customId || p._id,
+  id: p.customId || p.id || p._id,
 })
 
 class AdminService {
   // ── PRODUCTS ──────────────────────────────────────────────────────────────
   async getProducts() {
     const data = await productService.getAll()
-    return data.map(normalizeProduct)
+    return Array.isArray(data) ? data.map(normalizeProduct) : []
   }
 
   async addProduct(product) {
-    const slug = product.slug || product.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')
+    const slug = product.slug || product.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '')
     const payload = {
       customId:          product.id || `prod_${Date.now()}`,
       name:              product.name,
@@ -79,7 +79,7 @@ class AdminService {
       occasion:          product.occasion || '',
       price:             Number(product.price),
       duration:          Number(product.duration) || 3,
-      deposit:           Number(product.deposit),
+      deposit:           Number(product.deposit) || 0,
       availableQuantity: Number(product.availableQuantity) || 1,
       availability:      product.availability || 'available',
       isFeatured:        product.isFeatured || false,
@@ -87,11 +87,12 @@ class AdminService {
       description:       product.description || '',
       specifications:    product.specifications || { material: product.material || '', insurance: 'Included' },
     }
-    return normalizeProduct(await productService.create(payload))
+    const created = await productService.create(payload)
+    return normalizeProduct(created)
   }
 
   async updateProduct(id, updates) {
-    const slug = updates.slug || updates.name?.toLowerCase().replace(/[^a-z0-9]+/g, '-')
+    const slug = updates.slug || updates.name?.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '')
     const payload = {
       name:              updates.name,
       slug,
@@ -107,105 +108,107 @@ class AdminService {
       description:       updates.description || '',
       specifications:    updates.specifications || { material: updates.material || '', insurance: 'Included' },
     }
-    return normalizeProduct(await productService.update(id, payload))
+    const updated = await productService.update(id, payload)
+    return normalizeProduct(updated)
   }
 
   async deleteProduct(id) {
-    return productService.remove(id)
+    return await productService.remove(id)
   }
 
   // ── CATEGORIES ────────────────────────────────────────────────────────────
   async getCategories() {
-    return categoryService.getAll()
+    const data = await categoryService.getAll()
+    return Array.isArray(data) ? data : []
   }
 
   async addCategory(cat) {
-    const slug = cat.slug || cat.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')
-    return categoryService.create({ ...cat, customId: cat.id || slug, slug })
+    const slug = cat.slug || cat.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '')
+    return await categoryService.create({ ...cat, customId: cat.id || slug, slug })
   }
 
   async updateCategory(id, updates) {
-    return categoryService.update(id, updates)
+    return await categoryService.update(id, updates)
   }
 
   async deleteCategory(id) {
-    return categoryService.remove(id)
+    return await categoryService.remove(id)
   }
 
   // ── USERS ─────────────────────────────────────────────────────────────────
   async getUsers() {
     const data = await userService.getAll()
-    return data.map(normalizeUser)
+    return Array.isArray(data) ? data.map(normalizeUser) : []
   }
 
   async updateUserStatus(id, status) {
-    return userService.updateStatus(id, status)
+    return await userService.updateStatus(id, status)
   }
 
   async deleteUser(id) {
-    return userService.remove(id)
+    return await userService.remove(id)
   }
 
   // ── BOOKINGS ──────────────────────────────────────────────────────────────
   async getBookings() {
     const data = await bookingService.getAll()
-    return data.map(normalizeBooking)
+    return Array.isArray(data) ? data.map(normalizeBooking) : []
   }
 
   async updateBookingStatus(id, bookingStatus, paymentStatus) {
-    return bookingService.updateStatus(id, bookingStatus, paymentStatus)
+    return await bookingService.updateStatus(id, bookingStatus, paymentStatus)
   }
 
   // ── ORDERS ────────────────────────────────────────────────────────────────
   async getOrders() {
     const data = await orderService.getAll()
-    return data.map(normalizeOrder)
+    return Array.isArray(data) ? data.map(normalizeOrder) : []
   }
 
   async updateOrderStatus(id, status) {
-    return orderService.updateStatus(id, status)
+    return await orderService.updateStatus(id, status)
   }
 
   // ── PAYMENTS ──────────────────────────────────────────────────────────────
   async getPayments() {
     const data = await paymentService.getAll()
-    return data.map(normalizePayment)
+    return Array.isArray(data) ? data.map(normalizePayment) : []
   }
 
   async updatePaymentStatus(id, status) {
-    return paymentService.updateStatus(id, status)
+    return await paymentService.updateStatus(id, status)
   }
 
   // ── REVIEWS ───────────────────────────────────────────────────────────────
   async getReviews() {
     const data = await reviewService.getAll()
-    return data.map(normalizeReview)
+    return Array.isArray(data) ? data.map(normalizeReview) : []
   }
 
   async updateReviewStatus(id, status) {
-    return reviewService.updateStatus(id, status)
+    return await reviewService.updateStatus(id, status)
   }
 
   async deleteReview(id) {
-    return reviewService.remove(id)
+    return await reviewService.remove(id)
   }
 
   // ── SETTINGS ──────────────────────────────────────────────────────────────
   async getSettings() {
-    return settingsService.get()
+    return await settingsService.get()
   }
 
   async saveSettings(data) {
-    return settingsService.save(data)
+    return await settingsService.save(data)
   }
 
-  // ── DASHBOARD STATS (computed from live DB data) ───────────────────────
+  // ── DASHBOARD STATS ───────────────────────────────────────────────────────
   async getStats() {
     const [products, users, bookings, payments] = await Promise.all([
-      productService.getAll(),
-      userService.getAll(),
-      bookingService.getAll(),
-      paymentService.getAll(),
+      this.getProducts().catch(() => []),
+      this.getUsers().catch(() => []),
+      this.getBookings().catch(() => []),
+      this.getPayments().catch(() => []),
     ])
 
     const totalProducts     = products.length

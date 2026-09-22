@@ -22,6 +22,8 @@ import { useCart } from '../../context/CartContext'
 import { useLocalStorage } from '../../hooks/useLocalStorage'
 import { STORAGE_KEYS } from '../../utils/helpers'
 
+import { bookingService } from '../../services/api'
+
 const AVATAR_PRESETS = [
   'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
   'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80',
@@ -32,8 +34,22 @@ const AVATAR_PRESETS = [
 const Profile = () => {
   const { user, updateProfile, logout } = useAuth()
   const { wishlist } = useCart()
-  const [bookings] = useLocalStorage(STORAGE_KEYS.BOOKINGS, [])
+  const [bookings, setBookings] = useState([])
+  const [isSaving, setIsSaving] = useState(false)
   const navigate = useNavigate()
+
+  useEffect(() => {
+    let isMounted = true
+    bookingService
+      .getAll()
+      .then((data) => {
+        if (isMounted && Array.isArray(data)) setBookings(data)
+      })
+      .catch(() => {})
+    return () => {
+      isMounted = false
+    }
+  }, [])
 
   const [isEditing, setIsEditing] = useState(false)
   const [formData, setFormData] = useState({
@@ -54,15 +70,22 @@ const Profile = () => {
     }
   }, [user])
 
-  const handleSave = (e) => {
+  const handleSave = async (e) => {
     e.preventDefault()
-    updateProfile({
-      name: formData.name,
-      phone: formData.phone,
-      address: formData.address,
-      avatar: formData.avatar,
-    })
-    setIsEditing(false)
+    setIsSaving(true)
+    try {
+      await updateProfile({
+        name: formData.name,
+        phone: formData.phone,
+        address: formData.address,
+        avatar: formData.avatar,
+      })
+      setIsEditing(false)
+    } catch {
+      // toast shown in updateProfile
+    } finally {
+      setIsSaving(false)
+    }
   }
 
   const handleLogout = () => {

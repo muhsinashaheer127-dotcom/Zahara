@@ -17,6 +17,7 @@ import FeatureSection from '../components/auth/FeatureSection'
 import SEO from '../components/SEO'
 import { useAuth } from '../context/AuthContext'
 import { useAdminAuth } from '../hooks/useAdminAuth'
+import { endIntentionalLogout, isIntentionalLogout } from '../utils/authSession'
 
 // Yup Validation Schema
 const loginSchema = yup
@@ -52,8 +53,14 @@ const Login = () => {
     defaultValues: { email: '', password: '', rememberMe: false },
   })
 
-  // If already logged in, redirect away
+  // Respect intentional logout; otherwise send already-signed-in users to redirect target
   useEffect(() => {
+    if (isIntentionalLogout()) {
+      if (!isAuthenticated) {
+        endIntentionalLogout()
+      }
+      return
+    }
     if (isAuthenticated) {
       navigate(redirectTarget, { replace: true })
     }
@@ -62,13 +69,16 @@ const Login = () => {
   const onSubmit = async (data) => {
     setLoading(true)
     try {
-      const isAdminEmail = data.email.trim().toLowerCase() === 'zahararental@gmail.com'
-      if (isAdminEmail) {
-        await adminLogin(data.email, data.password)
-      }
       const user = await login(data.email, data.password)
+      if (user?.role === 'admin') {
+        try {
+          await adminLogin(data.email, data.password)
+        } catch {
+          // session already authenticated in AuthContext
+        }
+      }
       toast.success(`Welcome back, ${user?.name || 'Valued Client'}!`, { icon: '👑' })
-      const target = (user?.role === 'admin' || isAdminEmail) ? '/admin' : redirectTarget
+      const target = user?.role === 'admin' ? '/admin' : redirectTarget
       navigate(target, { replace: true })
     } catch (err) {
       toast.error(err.message || 'Invalid email or password. Please try again.')
@@ -79,27 +89,20 @@ const Login = () => {
 
   const handleFillDemo = () => {
     setValue('email', 'demo@zahara.com', { shouldValidate: true })
-    setValue('password', 'password123', { shouldValidate: true })
-    toast.success('User credentials filled!', { icon: '✨' })
+    setValue('password', 'zahara123', { shouldValidate: true })
+    toast.success('User credentials filled! (demo@zahara.com)', { icon: '✨' })
   }
 
   const handleFillAdminDemo = () => {
-    setValue('email', 'zahararental@gmail.com', { shouldValidate: true })
-    setValue('password', '1234567890', { shouldValidate: true })
-    toast.success('Admin credentials filled!', { icon: '👑' })
+    setValue('email', 'admin@zahara.com', { shouldValidate: true })
+    setValue('password', 'zahara@admin123', { shouldValidate: true })
+    toast.success('Admin credentials filled! (admin@zahara.com)', { icon: '👑' })
   }
 
   const handleSocialClick = async (provider) => {
-    setLoading(true)
-    toast.success(`Connecting with ${provider}...`, { icon: '✨' })
-    try {
-      await login('demo@zahara.com', 'password123')
-      navigate(redirectTarget, { replace: true })
-    } catch (err) {
-      toast.error(err.message || 'Social login failed.')
-    } finally {
-      setLoading(false)
-    }
+    toast(`Social sign-in with ${provider} is not configured yet. Please sign in with email and password.`, {
+      icon: 'ℹ️',
+    })
   }
 
   // Animation variants

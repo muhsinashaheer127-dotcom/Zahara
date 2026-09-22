@@ -32,16 +32,11 @@ const Hero = () => (
             {slide.type === "video" ? (
               <div className="absolute inset-0">
 
-                {/* Desktop Video - Intact desktop orientation & scaling */}
-                <video
-                  autoPlay
-                  muted
-                  loop
-                  playsInline
-                  className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-auto h-full object-cover md:min-w-full md:min-h-full md:h-auto md:w-auto md:rotate-[270deg]"
-                >
-                  <source src="/videos/hero-desktop.mp4" type="video/mp4" />
-                </video>
+                <img
+                  src="https://res.cloudinary.com/nmrxsjhh/image/upload/v1788104944/ChatGPT_Image_Aug_30_2026_09_18_53_PM_ohhb3a.png"
+                  alt={slide.title}
+                  className="hidden md:block absolute inset-0 w-full h-full object-cover"
+                />
 
                 {/* Mobile Video - Full cover background for <768px */}
                 <video
@@ -59,7 +54,12 @@ const Hero = () => (
               <LazyImage
                 src={slide.image}
                 alt={slide.title}
-                className="absolute inset-0 w-full h-full object-cover"
+                className="absolute inset-0
+    w-full h-full
+    object-cover
+    object-[75%_center]
+    sm:object-[72%_center]
+    md:object-center"
               />
             )}
 

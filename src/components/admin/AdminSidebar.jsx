@@ -1,4 +1,4 @@
-import { NavLink, useNavigate } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   FiGrid,
@@ -13,7 +13,7 @@ import {
   FiLogOut,
   FiX,
 } from 'react-icons/fi'
-import { useAdminAuth } from '../../hooks/useAdminAuth'
+import { useCompleteLogout } from '../../hooks/useCompleteLogout'
 
 const NAV_ITEMS = [
   { path: '/admin/dashboard', label: 'Dashboard', icon: FiGrid },
@@ -28,12 +28,10 @@ const NAV_ITEMS = [
 ]
 
 const AdminSidebar = ({ isOpen, onClose }) => {
-  const { adminLogout } = useAdminAuth()
-  const navigate = useNavigate()
+  const completeLogout = useCompleteLogout()
 
   const handleLogout = () => {
-    adminLogout()
-    navigate('/login', { replace: true })
+    completeLogout('/login')
   }
 
   const SidebarContent = (

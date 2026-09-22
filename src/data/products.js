@@ -1,8 +1,6 @@
 // Jewellery image URLs (Unsplash)
 export const IMAGES = {
-  hero1: 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=1920&q=80',
-  hero2: 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=1920&q=80',
-  hero3: 'https://images.unsplash.com/photo-1611591437281-460bf8912146?w=1920&q=80',
+  hero1: 'https://res.cloudinary.com/nmrxsjhh/image/upload/v1788103905/ChatGPT_Image_Aug_30_2026_09_01_33_PM_kdvwee.png',
   necklace: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSvhZDc_w1CdhxHhTepWNH74v7qlQswWPaTqade53WwaA&s',
   earrings: 'https://ksupreme.in/cdn/shop/files/Red-Stone-Jhumka-Earrings.webp?v=1783073271',
   bridal: 'https://cdn.shopify.com/s/files/1/0232/5737/files/1080X1080_-_Blog_Image-14_480x480.webp?v=1712122400',

@@ -65,7 +65,7 @@ const Navbar = () => {
   const handleLogout = () => {
     setDropdownOpen(false)
     setIsOpen(false)
-    adminLogout()
+    adminLogout({ silent: true })
     logout()
     navigate('/')
   }

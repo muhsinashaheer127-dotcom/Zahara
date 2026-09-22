@@ -1,14 +1,10 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react'
 import toast from 'react-hot-toast'
+import { authService } from '../services/api'
 
 const ADMIN_STORAGE_KEYS = {
   TOKEN: 'zh_admin_token',
   USER: 'zh_admin_user',
-}
-
-const DEV_ADMIN_CREDENTIALS = {
-  email: 'zahararental@gmail.com',
-  password: '1234567890',
 }
 
 const AdminAuthContext = createContext(null)
@@ -25,8 +21,17 @@ export const AdminAuthProvider = ({ children }) => {
       const storedUserStr = localStorage.getItem(ADMIN_STORAGE_KEYS.USER)
 
       if (storedToken && storedUserStr) {
-        setAdminToken(storedToken)
-        setAdminUser(JSON.parse(storedUserStr))
+        const parsed = JSON.parse(storedUserStr)
+        if (parsed.role === 'admin') {
+          setAdminToken(storedToken)
+          setAdminUser(parsed)
+          // Keep customer storage in sync so API calls use a valid admin JWT
+          localStorage.setItem('zahara_token', storedToken)
+          localStorage.setItem('zahara_user', storedUserStr)
+        } else {
+          localStorage.removeItem(ADMIN_STORAGE_KEYS.TOKEN)
+          localStorage.removeItem(ADMIN_STORAGE_KEYS.USER)
+        }
       }
     } catch (err) {
       console.error('Failed to initialize AdminAuthContext session:', err)
@@ -37,49 +42,52 @@ export const AdminAuthProvider = ({ children }) => {
     }
   }, [])
 
-  // ADMIN LOGIN
+  // ADMIN LOGIN (Real Backend Call)
   const adminLogin = useCallback(async (email, password) => {
     setLoading(true)
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        const cleanEmail = email ? email.trim().toLowerCase() : ''
-        const cleanPassword = password ? String(password).trim() : ''
+    try {
+      const cleanEmail = email ? email.trim() : ''
+      const response = await authService.login(cleanEmail, password)
 
-        if (
-          cleanEmail === DEV_ADMIN_CREDENTIALS.email.toLowerCase() &&
-          cleanPassword === DEV_ADMIN_CREDENTIALS.password
-        ) {
-          const userObj = {
-            id: 'admin_root',
-            name: 'Zahara Administrator',
-            email: DEV_ADMIN_CREDENTIALS.email,
-            role: 'admin',
-            avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
-          }
-          const mockToken = `zh_admin_jwt_${Date.now()}_${Math.random().toString(36).substring(2)}`
+      if (!response.success || !response.token) {
+        throw new Error(response.message || 'Login failed')
+      }
 
-          localStorage.setItem(ADMIN_STORAGE_KEYS.TOKEN, mockToken)
-          localStorage.setItem(ADMIN_STORAGE_KEYS.USER, JSON.stringify(userObj))
+      const { token, user } = response
 
-          setAdminToken(mockToken)
-          setAdminUser(userObj)
-          setLoading(false)
-          resolve(userObj)
-        } else {
-          setLoading(false)
-          reject(new Error('Invalid admin credentials'))
-        }
-      }, 600)
-    })
+      if (user.role !== 'admin') {
+        throw new Error('Access denied. Administrator privileges required.')
+      }
+
+      localStorage.setItem(ADMIN_STORAGE_KEYS.TOKEN, token)
+      localStorage.setItem(ADMIN_STORAGE_KEYS.USER, JSON.stringify(user))
+
+      // Also set client token so customer endpoints succeed when admin tests customer pages
+      localStorage.setItem('zahara_token', token)
+      localStorage.setItem('zahara_user', JSON.stringify(user))
+
+      setAdminToken(token)
+      setAdminUser(user)
+      return user
+    } catch (err) {
+      console.error('[AdminAuth] Login error:', err)
+      throw err
+    } finally {
+      setLoading(false)
+    }
   }, [])
 
   // ADMIN LOGOUT
-  const adminLogout = useCallback(() => {
+  const adminLogout = useCallback(({ silent = false } = {}) => {
     localStorage.removeItem(ADMIN_STORAGE_KEYS.TOKEN)
     localStorage.removeItem(ADMIN_STORAGE_KEYS.USER)
+    localStorage.removeItem('zahara_token')
+    localStorage.removeItem('zahara_user')
     setAdminToken(null)
     setAdminUser(null)
-    toast.success('Admin logged out successfully')
+    if (!silent) {
+      toast.success('Admin logged out successfully')
+    }
   }, [])
 
   const value = {

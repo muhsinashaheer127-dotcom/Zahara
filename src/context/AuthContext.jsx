@@ -1,34 +1,7 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react'
 import toast from 'react-hot-toast'
 import { STORAGE_KEYS } from '../utils/helpers'
-
-const DEFAULT_DEMO_USER = {
-  id: 'usr_demo_101',
-  name: 'Princess Diana',
-  email: 'demo@zahara.com',
-  password: 'password123',
-  phone: '+91 98765 43210',
-  address: '10 Royal Avenue, Jubilee Hills, Hyderabad',
-  avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
-  memberSince: 'January 2025',
-  totalRentals: 4,
-  activeRentals: 1,
-  role: 'user',
-}
-
-const DEFAULT_ADMIN_USER = {
-  id: 'admin_root',
-  name: 'Zahara Administrator',
-  email: 'zahararental@gmail.com',
-  password: '1234567890',
-  phone: '+91 98765 43210',
-  address: '10 Royal Avenue, Jubilee Hills, Hyderabad',
-  avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
-  memberSince: 'January 2025',
-  totalRentals: 0,
-  activeRentals: 0,
-  role: 'admin',
-}
+import { authService, userService } from '../services/api'
 
 const AuthContext = createContext(null)
 
@@ -37,30 +10,19 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(null)
   const [loading, setLoading] = useState(true)
 
-  // Initialize users database & session from localStorage
+  // Initialize session from localStorage on startup
   useEffect(() => {
     try {
-      // Pre-seed mock users DB if missing
-      const existingUsersStr = localStorage.getItem(STORAGE_KEYS.USERS)
-      let usersDB = existingUsersStr ? JSON.parse(existingUsersStr) : []
-      if (!usersDB.some((u) => u.email === DEFAULT_DEMO_USER.email)) {
-        usersDB.push(DEFAULT_DEMO_USER)
-      }
-      if (!usersDB.some((u) => u.email.toLowerCase() === DEFAULT_ADMIN_USER.email.toLowerCase())) {
-        usersDB.push(DEFAULT_ADMIN_USER)
-      }
-      localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(usersDB))
-
-      // Check stored session token & user
       const storedToken = localStorage.getItem(STORAGE_KEYS.TOKEN)
       const storedUserStr = localStorage.getItem(STORAGE_KEYS.USER)
 
       if (storedToken && storedUserStr) {
+        const parsedUser = JSON.parse(storedUserStr)
         setToken(storedToken)
-        setUser(JSON.parse(storedUserStr))
+        setUser(parsedUser)
       }
     } catch (err) {
-      console.error('Failed to initialize AuthContext session:', err)
+      console.error('Failed to initialize session from storage:', err)
       localStorage.removeItem(STORAGE_KEYS.TOKEN)
       localStorage.removeItem(STORAGE_KEYS.USER)
     } finally {
@@ -68,137 +30,96 @@ export const AuthProvider = ({ children }) => {
     }
   }, [])
 
-  // Synchronize helper for user object updates in mock DB
-  const saveUserToDBAndState = (updatedUser) => {
-    setUser(updatedUser)
-    localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(updatedUser))
-
-    try {
-      const existingUsersStr = localStorage.getItem(STORAGE_KEYS.USERS)
-      let usersDB = existingUsersStr ? JSON.parse(existingUsersStr) : []
-      const index = usersDB.findIndex((u) => u.email.toLowerCase() === updatedUser.email.toLowerCase())
-      if (index !== -1) {
-        usersDB[index] = { ...usersDB[index], ...updatedUser }
-      } else {
-        usersDB.push(updatedUser)
-      }
-      localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(usersDB))
-    } catch (err) {
-      console.error('Failed to update users DB:', err)
-    }
-  }
-
-  // LOGIN
+  // LOGIN (Real Backend Call)
   const login = useCallback(async (email, password) => {
     setLoading(true)
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        try {
-          const usersStr = localStorage.getItem(STORAGE_KEYS.USERS)
-          const usersDB = usersStr ? JSON.parse(usersStr) : [DEFAULT_DEMO_USER]
-          const foundUser = usersDB.find(
-            (u) => u.email.toLowerCase() === email.trim().toLowerCase()
-          )
+    try {
+      const response = await authService.login(email.trim(), password)
+      if (!response.success || !response.token) {
+        throw new Error(response.message || 'Login failed')
+      }
 
-          if (!foundUser) {
-            setLoading(false)
-            reject(new Error('No account found with this email address.'))
-            return
-          }
+      const { token: receivedToken, user: receivedUser } = response
 
-          if (foundUser.password && foundUser.password !== password) {
-            setLoading(false)
-            reject(new Error('Incorrect password. Please try again.'))
-            return
-          }
+      localStorage.setItem(STORAGE_KEYS.TOKEN, receivedToken)
+      localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(receivedUser))
 
-          const mockToken = `zh_jwt_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
-          localStorage.setItem(STORAGE_KEYS.TOKEN, mockToken)
-          localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(foundUser))
+      // If user is admin, also sync admin token for seamless admin panel access
+      if (receivedUser.role === 'admin') {
+        localStorage.setItem('zh_admin_token', receivedToken)
+        localStorage.setItem('zh_admin_user', JSON.stringify(receivedUser))
+      }
 
-          setToken(mockToken)
-          setUser(foundUser)
-          setLoading(false)
-          resolve(foundUser)
-        } catch (error) {
-          setLoading(false)
-          reject(error)
-        }
-      }, 600)
-    })
+      setToken(receivedToken)
+      setUser(receivedUser)
+      return receivedUser
+    } catch (error) {
+      console.error('[AuthContext] Login error:', error)
+      throw error
+    } finally {
+      setLoading(false)
+    }
   }, [])
 
-  // REGISTER
+  // REGISTER (Real Backend Call)
   const register = useCallback(async (userData) => {
     setLoading(true)
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        try {
-          const usersStr = localStorage.getItem(STORAGE_KEYS.USERS)
-          const usersDB = usersStr ? JSON.parse(usersStr) : [DEFAULT_DEMO_USER]
+    try {
+      const response = await authService.register(userData)
+      if (!response.success || !response.token) {
+        throw new Error(response.message || 'Registration failed')
+      }
 
-          const exists = usersDB.some(
-            (u) => u.email.toLowerCase() === userData.email.trim().toLowerCase()
-          )
+      const { token: receivedToken, user: receivedUser } = response
 
-          if (exists) {
-            setLoading(false)
-            reject(new Error('An account with this email address already exists.'))
-            return
-          }
+      localStorage.setItem(STORAGE_KEYS.TOKEN, receivedToken)
+      localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(receivedUser))
 
-          const newUser = {
-            id: `usr_${Date.now()}`,
-            name: userData.name,
-            email: userData.email.trim(),
-            password: userData.password,
-            phone: userData.phone || '',
-            address: userData.address || '',
-            avatar: userData.avatar || '',
-            memberSince: new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' }),
-            totalRentals: 0,
-            activeRentals: 0,
-            role: 'user',
-          }
-
-          usersDB.push(newUser)
-          localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(usersDB))
-
-          const mockToken = `zh_jwt_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
-          localStorage.setItem(STORAGE_KEYS.TOKEN, mockToken)
-          localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(newUser))
-
-          setToken(mockToken)
-          setUser(newUser)
-          setLoading(false)
-          resolve(newUser)
-        } catch (error) {
-          setLoading(false)
-          reject(error)
-        }
-      }, 600)
-    })
+      setToken(receivedToken)
+      setUser(receivedUser)
+      return receivedUser
+    } catch (error) {
+      console.error('[AuthContext] Register error:', error)
+      throw error
+    } finally {
+      setLoading(false)
+    }
   }, [])
 
   // LOGOUT
-  const logout = useCallback(() => {
+  const logout = useCallback(({ silent = false } = {}) => {
+    const hadSession = Boolean(
+      user || token || localStorage.getItem(STORAGE_KEYS.TOKEN)
+    )
     localStorage.removeItem(STORAGE_KEYS.TOKEN)
     localStorage.removeItem(STORAGE_KEYS.USER)
+    localStorage.removeItem('zh_admin_token')
+    localStorage.removeItem('zh_admin_user')
     setToken(null)
     setUser(null)
-    toast.success('Logged out successfully')
-  }, [])
+    if (!silent && hadSession) {
+      toast.success('Logged out successfully')
+    }
+  }, [user, token])
 
-  // UPDATE PROFILE
-  const updateProfile = useCallback((updates) => {
-    setUser((prevUser) => {
-      if (!prevUser) return null
-      const updated = { ...prevUser, ...updates }
-      saveUserToDBAndState(updated)
-      return updated
-    })
-    toast.success('Profile updated successfully!')
-  }, [])
+  // UPDATE PROFILE (Real Backend Call)
+  const updateProfile = useCallback(async (updates) => {
+    if (!user) return
+    const userId = user.customId || user.id || user._id
+    try {
+      const response = await userService.updateProfile(userId, updates)
+      const updatedUser = response?.user || { ...user, ...updates }
+
+      localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(updatedUser))
+      setUser(updatedUser)
+      toast.success('Profile updated successfully!')
+      return updatedUser
+    } catch (err) {
+      console.error('[AuthContext] Update profile error:', err)
+      toast.error(err.message || 'Failed to update profile.')
+      throw err
+    }
+  }, [user])
 
   const value = {
     user,
@@ -222,3 +143,4 @@ export const useAuth = () => {
   return context
 }
 
+export default AuthContext

@@ -14,9 +14,20 @@ import toast from 'react-hot-toast'
 import SEO from '../../components/SEO'
 import adminService from '../../services/adminService'
 
+const defaultSettings = {
+  adminEmail: 'admin@zahara.com',
+  siteName: 'Zahara Luxury Rentals',
+  supportEmail: 'support@zahara.com',
+  currency: 'INR',
+  minRentalDays: 3,
+  taxRate: 18,
+  securityDepositPercent: 20,
+}
+
 const AdminSettings = () => {
-  const [settings, setSettings] = useState(adminService.getSettings())
+  const [settings, setSettings] = useState(defaultSettings)
   const [activeTab, setActiveTab] = useState('profile')
+  const [saving, setSaving] = useState(false)
 
   // Password fields
   const [currentPassword, setCurrentPassword] = useState('')
@@ -24,17 +35,37 @@ const AdminSettings = () => {
   const [confirmPassword, setConfirmPassword] = useState('')
 
   useEffect(() => {
-    setSettings(adminService.getSettings())
+    let isMounted = true
+    adminService
+      .getSettings()
+      .then((data) => {
+        if (isMounted && data && typeof data === 'object') {
+          setSettings((prev) => ({ ...prev, ...data }))
+        }
+      })
+      .catch((err) => {
+        console.error('[AdminSettings] Failed to fetch settings:', err)
+      })
+    return () => {
+      isMounted = false
+    }
   }, [])
 
   const handleChange = (key, value) => {
     setSettings((prev) => ({ ...prev, [key]: value }))
   }
 
-  const handleSaveSettings = (e) => {
+  const handleSaveSettings = async (e) => {
     e.preventDefault()
-    adminService.saveSettings(settings)
-    toast.success('Admin settings updated successfully!')
+    setSaving(true)
+    try {
+      await adminService.saveSettings(settings)
+      toast.success('Admin settings updated successfully!')
+    } catch (err) {
+      toast.error(err.message || 'Failed to update settings.')
+    } finally {
+      setSaving(false)
+    }
   }
 
   const handleChangePassword = (e) => {

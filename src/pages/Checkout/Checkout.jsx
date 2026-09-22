@@ -7,29 +7,70 @@ import { useCart } from '../../context/CartContext'
 import { useAuth } from '../../context/AuthContext'
 import { formatPrice } from '../../utils/helpers'
 
+import { useNavigate } from 'react-router-dom'
+import { bookingService } from '../../services/api'
+import toast from 'react-hot-toast'
+
 const WHATSAPP_NUMBER = '919747133559'
 
 const Checkout = () => {
-  const { cartItems, cartSummary } = useCart()
+  const { cartItems, cartSummary, clearCart } = useCart()
   const { user } = useAuth()
+  const navigate = useNavigate()
+  const [submitting, setSubmitting] = useState(false)
   const [form, setForm] = useState({
     name: user?.name || '',
     email: user?.email || '',
-    phone: '',
-    address: '',
+    phone: user?.phone || '',
+    address: user?.address || '',
     city: '',
     pincode: '',
   })
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value })
 
-  const handleWhatsAppEnquiry = (e) => {
+  const handleWhatsAppEnquiry = async (e) => {
     e.preventDefault()
+    setSubmitting(true)
+
+    let createdBookingId = `ZH-BK-${Math.floor(1000 + Math.random() * 9000)}`
+
+    try {
+      const bookingData = {
+        customerName: form.name || user?.name || 'Valued Client',
+        customerEmail: form.email || user?.email || '',
+        customerPhone: form.phone || '',
+        deliveryAddress: `${form.address}, ${form.city} - ${form.pincode}`,
+        productName: cartItems.map((i) => i.name).join(', '),
+        rentalAmount: cartSummary.subtotal,
+        securityDeposit: cartSummary.deposit,
+        totalAmount: cartSummary.total,
+        duration: cartItems[0]?.duration || 3,
+        items: cartItems.map((item) => ({
+          cartId: item.cartId,
+          productId: item.id || item.slug,
+          name: item.name,
+          price: item.price,
+          quantity: item.quantity,
+          size: item.size,
+        })),
+        status: 'Pending',
+        paymentStatus: 'Pending',
+      }
+
+      const res = await bookingService.create(bookingData)
+      if (res?.bookingId || res?.booking?.customId) {
+        createdBookingId = res.bookingId || res.booking.customId
+      }
+    } catch (err) {
+      console.warn('[Checkout] Could not persist booking to backend:', err.message)
+    }
+
     const itemsList = cartItems
-      .map((item) => `• ${item.name} (${item.size}) x${item.quantity} — ${formatPrice(item.price)}`)
+      .map((item) => `• ${item.name} (${item.size || 'Free Size'}) x${item.quantity} — ${formatPrice(item.price)}`)
       .join('\n')
     const message =
-      `Hello Zahara! I would like to enquire about renting the following items:\n\n` +
+      `Hello Zahara! I would like to book the following items (Booking ID: ${createdBookingId}):\n\n` +
       `${itemsList}\n\n` +
       `*Order Summary*\n` +
       `Rental Total: ${formatPrice(cartSummary.subtotal)}\n` +
@@ -42,8 +83,13 @@ const Checkout = () => {
       `City: ${form.city || 'Not provided'}\n` +
       `Address: ${form.address || 'Not provided'}\n\n` +
       `Please confirm availability and next steps. Thank you!`
+
     const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`
     window.open(url, '_blank')
+
+    clearCart()
+    setSubmitting(false)
+    navigate('/booking-success', { state: { bookingId: createdBookingId } })
   }
 
   if (cartItems.length === 0) {

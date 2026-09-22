@@ -1,6 +1,5 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react'
 import { productService, categoryService } from '../services/api'
-import { PRODUCTS as FALLBACK_PRODUCTS, CATEGORIES as FALLBACK_CATEGORIES } from '../data/products'
 
 const ProductContext = createContext(null)
 
@@ -8,9 +7,11 @@ export const ProductProvider = ({ children }) => {
   const [products,   setProducts]   = useState([])
   const [categories, setCategories] = useState([])
   const [loading,    setLoading]    = useState(true)
+  const [error,      setError]      = useState(null)
 
   const loadData = useCallback(async () => {
     setLoading(true)
+    setError(null)
     try {
       // Load live data from MongoDB via the backend API
       const [apiProducts, apiCategories] = await Promise.all([
@@ -18,13 +19,13 @@ export const ProductProvider = ({ children }) => {
         categoryService.getAll(),
       ])
 
-      setProducts(Array.isArray(apiProducts) && apiProducts.length > 0 ? apiProducts : FALLBACK_PRODUCTS)
-      setCategories(Array.isArray(apiCategories) && apiCategories.length > 0 ? apiCategories : FALLBACK_CATEGORIES)
+      setProducts(Array.isArray(apiProducts) ? apiProducts : [])
+      setCategories(Array.isArray(apiCategories) ? apiCategories : [])
     } catch (err) {
-      // Backend unavailable — fall back to static local data
-      console.warn('[ProductContext] Backend unavailable, using local fallback data:', err.message)
-      setProducts(FALLBACK_PRODUCTS)
-      setCategories(FALLBACK_CATEGORIES)
+      console.error('[ProductContext] Failed to load data from backend:', err.message)
+      setError(err.message || 'Unable to load products from server. Please ensure the backend and MongoDB are running.')
+      setProducts([])
+      setCategories([])
     } finally {
       setLoading(false)
     }
@@ -53,6 +54,7 @@ export const ProductProvider = ({ children }) => {
     products,
     categories,
     loading,
+    error,
     getProductBySlug,
     refreshProducts: loadData,
   }
