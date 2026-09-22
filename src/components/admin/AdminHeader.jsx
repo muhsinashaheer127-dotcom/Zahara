@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { FiMenu, FiSearch, FiBell, FiUser, FiCheckCircle } from 'react-icons/fi'
+import { Link } from 'react-router-dom'
+import { FiMenu, FiSearch, FiBell, FiUser, FiCheckCircle, FiGlobe } from 'react-icons/fi'
 import { useAdminAuth } from '../../hooks/useAdminAuth'
 
 const NOTIFICATIONS = [
@@ -51,8 +52,18 @@ const AdminHeader = ({ onMenuClick, searchTerm, setSearchTerm }) => {
         </div>
       </div>
 
-      {/* Right: Notifications & Profile */}
+      {/* Right: Actions, Notifications & Profile */}
       <div className="flex items-center gap-3">
+        {/* Back to Main Website Button */}
+        <Link
+          to="/"
+          className="flex items-center gap-2 px-3 py-2 rounded-xl border border-gold/30 bg-gold/10 hover:bg-gold/20 text-gold text-xs font-semibold transition-all duration-300 shadow-sm cursor-pointer"
+          title="Return to customer website"
+        >
+          <FiGlobe size={15} />
+          <span className="hidden sm:inline">Back to Site</span>
+        </Link>
+
         {/* Notifications Dropdown */}
         <div className="relative">
           <button
@@ -125,12 +136,18 @@ const AdminHeader = ({ onMenuClick, searchTerm, setSearchTerm }) => {
                 <p className="text-[11px] text-gold/70">{adminUser?.email}</p>
               </div>
               <div className="space-y-1">
-                <a
-                  href="/admin/settings"
+                <Link
+                  to="/"
+                  className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-white/80 hover:text-gold hover:bg-white/5 transition-colors"
+                >
+                  <FiGlobe size={14} /> Back to Website
+                </Link>
+                <Link
+                  to="/admin/settings"
                   className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-white/80 hover:text-gold hover:bg-white/5 transition-colors"
                 >
                   <FiUser size={14} /> Admin Profile & Settings
-                </a>
+                </Link>
               </div>
             </div>
           )}

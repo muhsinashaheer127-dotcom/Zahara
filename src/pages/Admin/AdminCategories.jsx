@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { FiLayers, FiPlus, FiEdit, FiTrash2, FiEye } from 'react-icons/fi'
+import { FiLayers, FiPlus, FiEdit, FiTrash2, FiRefreshCw } from 'react-icons/fi'
 import toast from 'react-hot-toast'
 import AdminTable from '../../components/admin/AdminTable'
 import AdminModal from '../../components/admin/AdminModal'
@@ -16,15 +16,14 @@ const AdminCategories = () => {
   const [image, setImage] = useState('')
   const [isEditing, setIsEditing] = useState(false)
 
-  useEffect(() => {
-    loadCategories()
-    const handleUpdate = () => loadCategories()
-    window.addEventListener('zh_admin_data_updated', handleUpdate)
-    return () => window.removeEventListener('zh_admin_data_updated', handleUpdate)
-  }, [])
+  useEffect(() => { loadCategories() }, [])
 
-  const loadCategories = () => {
-    setCategories(adminService.getCategories())
+  const loadCategories = async () => {
+    try {
+      setCategories(await adminService.getCategories())
+    } catch (err) {
+      toast.error('Failed to load categories: ' + err.message)
+    }
   }
 
   const handleOpenAdd = () => {
@@ -42,28 +41,33 @@ const AdminCategories = () => {
     setIsAddEditOpen(true)
   }
 
-  const handleSave = (e) => {
+  const handleSave = async (e) => {
     e.preventDefault()
     if (!name) return
-
-    if (isEditing) {
-      adminService.updateCategory(selectedCategory.id, { name, image })
-      toast.success('Category updated!')
-    } else {
-      adminService.addCategory({ name, image })
-      toast.success('Category added!')
+    try {
+      if (isEditing) {
+        await adminService.updateCategory(selectedCategory.id || selectedCategory.slug, { name, image })
+        toast.success('Category updated!')
+      } else {
+        await adminService.addCategory({ name, image })
+        toast.success('Category added!')
+      }
+      setIsAddEditOpen(false)
+      await loadCategories()
+    } catch (err) {
+      toast.error('Failed to save category: ' + err.message)
     }
-
-    setIsAddEditOpen(false)
-    loadCategories()
   }
 
-  const handleDelete = () => {
-    if (selectedCategory) {
-      adminService.deleteCategory(selectedCategory.id)
+  const handleDelete = async () => {
+    if (!selectedCategory) return
+    try {
+      await adminService.deleteCategory(selectedCategory.id || selectedCategory.slug)
       toast.success(`Category "${selectedCategory.name}" deleted`)
       setIsDeleteOpen(false)
-      loadCategories()
+      await loadCategories()
+    } catch (err) {
+      toast.error('Failed to delete: ' + err.message)
     }
   }
 

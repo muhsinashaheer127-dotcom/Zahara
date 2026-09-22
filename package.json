@@ -5,6 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "server": "node server/index.js",
+    "server:dev": "node --watch server/index.js",
+    "seed": "node server/seed.js",
+    "dev:all": "concurrently \"npm run server:dev\" \"npm run dev\"",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"
@@ -12,7 +16,13 @@
   "dependencies": {
     "@hookform/resolvers": "^5.5.7",
     "axios": "^1.18.1",
+    "concurrently": "^10.0.5",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
     "framer-motion": "^12.42.2",
+    "mongodb": "^7.6.0",
+    "mongoose": "^9.9.5",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "react-hook-form": "^7.83.0",

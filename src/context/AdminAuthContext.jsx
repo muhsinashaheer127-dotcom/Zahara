@@ -8,7 +8,7 @@ const ADMIN_STORAGE_KEYS = {
 
 const DEV_ADMIN_CREDENTIALS = {
   email: 'zahararental@gmail.com',
-  password: '12345',
+  password: '1234567890',
 }
 
 const AdminAuthContext = createContext(null)

@@ -16,7 +16,7 @@ const ProtectedAdminRoute = ({ children }) => {
   }
 
   if (!isAdminAuthenticated) {
-    return <Navigate to="/zahara-admin-login" replace />
+    return <Navigate to="/login?redirect=/admin/dashboard" replace />
   }
 
   return children ? children : <Outlet />

@@ -9,13 +9,14 @@ import StickyBookingCard from '../../components/ProductDetails/StickyBookingCard
 import ReviewsSection from '../../components/ProductDetails/ReviewsSection'
 import FeaturesCard from '../../components/ProductDetails/FeaturesCard'
 import RentalDurationSelector from '../../components/ProductDetails/RentalDurationSelector'
-import { PRODUCTS } from '../../data/products'
-import { getProductBySlug, formatPrice, calculateRentalTotal } from '../../utils/helpers'
+import { useProducts } from '../../context/ProductContext'
+import { formatPrice, calculateRentalTotal } from '../../utils/helpers'
 import { useCart } from '../../context/CartContext'
 
 const ProductDetails = () => {
   const { slug } = useParams()
-  const product = getProductBySlug(PRODUCTS, slug)
+  const { products, getProductBySlug } = useProducts()
+  const product = getProductBySlug(slug)
   const { addToCart, toggleWishlist, isInWishlist } = useCart()
 
   const [selectedImage, setSelectedImage] = useState(0)
@@ -44,7 +45,7 @@ const ProductDetails = () => {
   }
 
   const rentalTotal = calculateRentalTotal(product.price, duration, quantity)
-  const related = PRODUCTS.filter((p) => p.category === product.category && p.id !== product.id).slice(0, 4)
+  const related = (products || []).filter((p) => p.category === product.category && String(p.id) !== String(product.id)).slice(0, 4)
   const inWishlist = isInWishlist(product.id)
 
   const handleRent = () => {

@@ -4,6 +4,7 @@ import { Toaster } from 'react-hot-toast'
 import { AuthProvider } from './context/AuthContext'
 import { AdminAuthProvider } from './context/AdminAuthContext'
 import { CartProvider } from './context/CartContext'
+import { ProductProvider } from './context/ProductContext'
 import Layout from './components/Layout/Layout'
 import ScrollToTop from './components/ScrollToTop'
 
@@ -31,7 +32,6 @@ import Privacy from './pages/Privacy/Privacy'
 // Admin Components & Pages
 import ProtectedAdminRoute from './components/admin/ProtectedAdminRoute'
 import AdminLayout from './components/admin/AdminLayout'
-import AdminLogin from './pages/admin/AdminLogin'
 import AdminDashboard from './pages/admin/AdminDashboard'
 import AdminProducts from './pages/admin/AdminProducts'
 import AdminUsers from './pages/admin/AdminUsers'
@@ -58,13 +58,9 @@ const AnimatedRoutes = () => {
     '/reset-password',
   ].includes(location.pathname)
 
-  // 1. Hidden Admin Login Route (No customer Header/Footer)
+  // Redirect legacy /zahara-admin-login to unified /login
   if (isAdminLoginPath) {
-    return (
-      <Routes location={location}>
-        <Route path="/zahara-admin-login" element={<AdminLogin />} />
-      </Routes>
-    )
+    return <Navigate to="/login?redirect=/admin/dashboard" replace />
   }
 
   // 2. Protected Admin Portal Routes
@@ -167,26 +163,28 @@ const AnimatedRoutes = () => {
 const App = () => (
   <AdminAuthProvider>
     <AuthProvider>
-      <CartProvider>
-        <BrowserRouter>
-          <ScrollToTop />
-          <AnimatedRoutes />
-          <Toaster
-            position="top-right"
-            toastOptions={{
-              style: {
-                background: '#111111',
-                color: '#fff',
-                border: '1px solid rgba(212, 175, 55, 0.4)',
-                borderRadius: '12px',
-                fontFamily: 'Poppins, sans-serif',
-                fontSize: '13px',
-              },
-              success: { iconTheme: { primary: '#D4AF37', secondary: '#000' } },
-            }}
-          />
-        </BrowserRouter>
-      </CartProvider>
+      <ProductProvider>
+        <CartProvider>
+          <BrowserRouter>
+            <ScrollToTop />
+            <AnimatedRoutes />
+            <Toaster
+              position="top-right"
+              toastOptions={{
+                style: {
+                  background: '#111111',
+                  color: '#fff',
+                  border: '1px solid rgba(212, 175, 55, 0.4)',
+                  borderRadius: '12px',
+                  fontFamily: 'Poppins, sans-serif',
+                  fontSize: '13px',
+                },
+                success: { iconTheme: { primary: '#D4AF37', secondary: '#000' } },
+              }}
+            />
+          </BrowserRouter>
+        </CartProvider>
+      </ProductProvider>
     </AuthProvider>
   </AdminAuthProvider>
 )

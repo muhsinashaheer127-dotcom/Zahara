@@ -21,17 +21,21 @@ const AdminDashboard = () => {
   const [recentBookings, setRecentBookings] = useState([])
   const [recentProducts, setRecentProducts] = useState([])
 
-  useEffect(() => {
-    loadData()
-    const handleUpdate = () => loadData()
-    window.addEventListener('zh_admin_data_updated', handleUpdate)
-    return () => window.removeEventListener('zh_admin_data_updated', handleUpdate)
-  }, [])
+  useEffect(() => { loadData() }, [])
 
-  const loadData = () => {
-    setStats(adminService.getStats())
-    setRecentBookings(adminService.getBookings().slice(0, 5))
-    setRecentProducts(adminService.getProducts().slice(0, 5))
+  const loadData = async () => {
+    try {
+      const [stats, bookings, products] = await Promise.all([
+        adminService.getStats(),
+        adminService.getBookings(),
+        adminService.getProducts(),
+      ])
+      setStats(stats)
+      setRecentBookings(bookings.slice(0, 5))
+      setRecentProducts(products.slice(0, 5))
+    } catch (err) {
+      console.error('[Dashboard] Failed to load data:', err.message)
+    }
   }
 
   const bookingColumns = [

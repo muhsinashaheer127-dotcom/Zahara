@@ -5,11 +5,12 @@ import FilterBar from '../../components/FilterBar/FilterBar'
 import ProductCard from '../../components/ProductCard/ProductCard'
 import Categories from '../../components/Categories/Categories'
 import AnimateOnScroll from '../../components/AnimateOnScroll'
-import { PRODUCTS } from '../../data/products'
+import { useProducts } from '../../context/ProductContext'
 import { filterProducts } from '../../utils/helpers'
 import { useDebounce } from '../../hooks/useLocalStorage'
 
 const Collections = () => {
+  const { products } = useProducts()
   const [searchParams] = useSearchParams()
   const [mobileFilters, setMobileFilters] = useState(false)
   const [filters, setFilters] = useState({
@@ -30,8 +31,8 @@ const Collections = () => {
   }, [searchParams])
 
   const filteredProducts = useMemo(
-    () => filterProducts(PRODUCTS, { ...filters, search: debouncedSearch }),
-    [filters, debouncedSearch]
+    () => filterProducts(products || [], { ...filters, search: debouncedSearch }),
+    [products, filters, debouncedSearch]
   )
 
   return (

@@ -12,10 +12,12 @@ import {
   FiSettings,
   FiLogOut,
   FiChevronDown,
+  FiShield,
 } from 'react-icons/fi'
 import { useState, useEffect, useRef } from 'react'
 import { useCart } from '../../context/CartContext'
 import { useAuth } from '../../context/AuthContext'
+import { useAdminAuth } from '../../hooks/useAdminAuth'
 
 const NAV_LINKS = [
   { label: 'Home', path: '/' },
@@ -33,6 +35,7 @@ const Navbar = () => {
   const dropdownRef = useRef(null)
   const { cartItems, wishlist } = useCart()
   const { user, isAuthenticated, logout } = useAuth()
+  const { adminLogout } = useAdminAuth()
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -62,17 +65,22 @@ const Navbar = () => {
   const handleLogout = () => {
     setDropdownOpen(false)
     setIsOpen(false)
+    adminLogout()
     logout()
     navigate('/')
   }
 
-  const dropdownItems = [
+  const baseDropdownItems = [
     { label: 'My Profile', icon: FiUser, path: '/profile' },
     { label: 'My Orders', icon: FiPackage, path: '/bookings' },
     { label: 'Wishlist', icon: FiHeart, path: '/wishlist' },
     { label: 'Rental History', icon: FiClock, path: '/bookings' },
     { label: 'Settings', icon: FiSettings, path: '/profile' },
   ]
+
+  const dropdownItems = user?.role === 'admin'
+    ? [{ label: 'Admin Portal', icon: FiShield, path: '/admin/dashboard' }, ...baseDropdownItems]
+    : baseDropdownItems
 
   return (
     <header

@@ -33,7 +33,7 @@ const AdminSidebar = ({ isOpen, onClose }) => {
 
   const handleLogout = () => {
     adminLogout()
-    navigate('/zahara-admin-login', { replace: true })
+    navigate('/login', { replace: true })
   }
 
   const SidebarContent = (

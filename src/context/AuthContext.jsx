@@ -16,6 +16,20 @@ const DEFAULT_DEMO_USER = {
   role: 'user',
 }
 
+const DEFAULT_ADMIN_USER = {
+  id: 'admin_root',
+  name: 'Zahara Administrator',
+  email: 'zahararental@gmail.com',
+  password: '1234567890',
+  phone: '+91 98765 43210',
+  address: '10 Royal Avenue, Jubilee Hills, Hyderabad',
+  avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
+  memberSince: 'January 2025',
+  totalRentals: 0,
+  activeRentals: 0,
+  role: 'admin',
+}
+
 const AuthContext = createContext(null)
 
 export const AuthProvider = ({ children }) => {
@@ -31,8 +45,11 @@ export const AuthProvider = ({ children }) => {
       let usersDB = existingUsersStr ? JSON.parse(existingUsersStr) : []
       if (!usersDB.some((u) => u.email === DEFAULT_DEMO_USER.email)) {
         usersDB.push(DEFAULT_DEMO_USER)
-        localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(usersDB))
       }
+      if (!usersDB.some((u) => u.email.toLowerCase() === DEFAULT_ADMIN_USER.email.toLowerCase())) {
+        usersDB.push(DEFAULT_ADMIN_USER)
+      }
+      localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(usersDB))
 
       // Check stored session token & user
       const storedToken = localStorage.getItem(STORAGE_KEYS.TOKEN)

@@ -16,6 +16,7 @@ import SocialLogin from '../components/auth/SocialLogin'
 import FeatureSection from '../components/auth/FeatureSection'
 import SEO from '../components/SEO'
 import { useAuth } from '../context/AuthContext'
+import { useAdminAuth } from '../hooks/useAdminAuth'
 
 // Yup Validation Schema
 const loginSchema = yup
@@ -34,6 +35,7 @@ const loginSchema = yup
 
 const Login = () => {
   const { login, isAuthenticated } = useAuth()
+  const { adminLogin } = useAdminAuth()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const redirectTarget = searchParams.get('redirect') || '/'
@@ -60,9 +62,13 @@ const Login = () => {
   const onSubmit = async (data) => {
     setLoading(true)
     try {
+      const isAdminEmail = data.email.trim().toLowerCase() === 'zahararental@gmail.com'
+      if (isAdminEmail) {
+        await adminLogin(data.email, data.password)
+      }
       const user = await login(data.email, data.password)
       toast.success(`Welcome back, ${user?.name || 'Valued Client'}!`, { icon: '👑' })
-      const target = user?.role === 'admin' ? '/admin' : redirectTarget
+      const target = (user?.role === 'admin' || isAdminEmail) ? '/admin' : redirectTarget
       navigate(target, { replace: true })
     } catch (err) {
       toast.error(err.message || 'Invalid email or password. Please try again.')
@@ -74,7 +80,13 @@ const Login = () => {
   const handleFillDemo = () => {
     setValue('email', 'demo@zahara.com', { shouldValidate: true })
     setValue('password', 'password123', { shouldValidate: true })
-    toast.success('Demo credentials filled!', { icon: '✨' })
+    toast.success('User credentials filled!', { icon: '✨' })
+  }
+
+  const handleFillAdminDemo = () => {
+    setValue('email', 'zahararental@gmail.com', { shouldValidate: true })
+    setValue('password', '1234567890', { shouldValidate: true })
+    toast.success('Admin credentials filled!', { icon: '👑' })
   }
 
   const handleSocialClick = async (provider) => {
@@ -120,21 +132,7 @@ const Login = () => {
         description="Continue your luxury jewellery journey."
       />
 
-      {/* Demo credentials helper pill */}
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 0.2 }}
-        className="mb-5 text-center"
-      >
-        <button
-          type="button"
-          onClick={handleFillDemo}
-          className="text-[11px] font-medium text-[#D4AF37] hover:text-[#F3E5AB] bg-[#D4AF37]/10 hover:bg-[#D4AF37]/20 px-3.5 py-1.5 rounded-full border border-[#D4AF37]/35 transition-all duration-300 shadow-sm cursor-pointer"
-        >
-          ✨ Click to fill Demo Credentials (demo@zahara.com)
-        </button>
-      </motion.div>
+
 
       {/* Form with Staggered Animations */}
       <motion.form

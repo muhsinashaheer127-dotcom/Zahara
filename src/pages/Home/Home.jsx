@@ -9,12 +9,15 @@ import Testimonials from '../../components/Testimonials/Testimonials'
 import Gallery from '../../components/Gallery/Gallery'
 import FAQ from '../../components/FAQ/FAQ'
 import Newsletter from '../../components/Newsletter/Newsletter'
-import { PRODUCTS } from '../../data/products'
+import { useProducts } from '../../context/ProductContext'
 
 const Home = () => {
-  const featured = PRODUCTS.filter((p) => p.isFeatured).slice(0, 4)
-  const newArrivals = PRODUCTS.filter((p) => p.isNew).slice(0, 4)
-  const bestSellers = PRODUCTS.filter((p) => p.isBestSeller).slice(0, 4)
+  const { products } = useProducts()
+  const safeProducts = Array.isArray(products) ? products : []
+
+  const featured    = safeProducts.filter((p) => p.isFeatured).slice(0, 4)
+  const newArrivals = safeProducts.filter((p) => p.isNewItem || p.isNew).slice(0, 4)
+  const bestSellers = safeProducts.filter((p) => p.isBestSeller).slice(0, 4)
 
   return (
     <>
@@ -31,7 +34,7 @@ const Home = () => {
       <ProductSection
         title="New Arrivals"
         subtitle="Latest Jewellery"
-        products={newArrivals.length ? newArrivals : PRODUCTS.slice(0, 4)}
+        products={newArrivals.length ? newArrivals : safeProducts.slice(0, 4)}
         viewAllLink="/collections?sort=newest"
       />
       <div className="bg-charcoal">
