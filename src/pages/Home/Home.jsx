@@ -28,7 +28,7 @@ const Home = () => {
       <ProductSection
         title="Featured Collection"
         subtitle="Curated For You"
-        products={featured}
+        products={featured.length ? featured : safeProducts.slice(0, 4)}
         viewAllLink="/collections"
       />
       <ProductSection
@@ -41,7 +41,7 @@ const Home = () => {
         <ProductSection
           title="Best Sellers"
           subtitle="Most Loved"
-          products={bestSellers}
+          products={bestSellers.length ? bestSellers : safeProducts.slice(0, 4)}
           viewAllLink="/collections?sort=popularity"
         />
       </div>

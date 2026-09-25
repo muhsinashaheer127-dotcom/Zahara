@@ -11,15 +11,17 @@ import AdminModal from '../../components/admin/AdminModal'
 import SEO from '../../components/SEO'
 import adminService from '../../services/adminService'
 import { OCCASIONS } from '../../data/products'
+import { useProducts } from '../../context/ProductContext'
 
 const INITIAL_FORM = {
   name: '', id: '', category: 'bridal-sets', description: '',
   price: '', duration: 3, deposit: '', availableQuantity: 1,
   availability: 'available', imageUrl: '', material: 'Gold-plated alloy',
-  occasion: 'Wedding', isFeatured: false,
+  occasion: 'Wedding', isFeatured: false, isBestSeller: false, isNewItem: true,
 }
 
 const AdminProducts = () => {
+  const { refreshProducts } = useProducts()
   const [products,  setProducts]  = useState([])
   const [categories, setCategories] = useState([])
   const [loading,   setLoading]   = useState(true)
@@ -89,12 +91,15 @@ const AdminProducts = () => {
     setIsEditing(true)
     setSelectedProduct(p)
     setFormData({
-      name: p.name || '', id: p.id || '', category: p.category || 'bridal-sets',
-      description: p.description || '', price: p.price || '', duration: p.duration || 3,
-      deposit: p.deposit || '', availableQuantity: p.availableQuantity || 1,
+      name: p.name || '', id: p.id || p.customId || '', category: p.category || 'bridal-sets',
+      description: p.description || '', price: p.price ?? '', duration: p.duration || 3,
+      deposit: p.deposit ?? '', availableQuantity: p.availableQuantity ?? 1,
       availability: p.availability || 'available', imageUrl: p.images?.[0] || '',
       material: p.specifications?.material || 'Gold-plated alloy',
-      occasion: p.occasion || 'Wedding', isFeatured: Boolean(p.isFeatured),
+      occasion: p.occasion || 'Wedding',
+      isFeatured: Boolean(p.isFeatured),
+      isBestSeller: Boolean(p.isBestSeller),
+      isNewItem: Boolean(p.isNewItem !== undefined ? p.isNewItem : p.isNew),
     })
     setIsAddEditOpen(true)
   }
@@ -111,19 +116,23 @@ const AdminProducts = () => {
       duration: Number(formData.duration), deposit: Number(formData.deposit),
       availableQuantity: Number(formData.availableQuantity), availability: formData.availability,
       images: [formData.imageUrl || 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=800&q=80'],
-      occasion: formData.occasion, isFeatured: formData.isFeatured,
+      occasion: formData.occasion,
+      isFeatured: formData.isFeatured,
+      isBestSeller: formData.isBestSeller,
+      isNewItem: formData.isNewItem,
       specifications: { material: formData.material, care: 'Professional cleaning included', insurance: 'Included' },
     }
     try {
+      const targetId = selectedProduct?._id || selectedProduct?.id || formData.id
       if (isEditing) {
-        await adminService.updateProduct(selectedProduct.id, payload)
+        await adminService.updateProduct(targetId, payload)
         toast.success('Product updated successfully!')
       } else {
         await adminService.addProduct(payload)
         toast.success('New product added successfully!')
       }
       setIsAddEditOpen(false)
-      await loadData()
+      await Promise.all([loadData(), refreshProducts?.()])
     } catch (err) {
       toast.error('Failed to save: ' + err.message)
     } finally {
@@ -135,11 +144,12 @@ const AdminProducts = () => {
     if (!selectedProduct) return
     setSaving(true)
     try {
-      await adminService.deleteProduct(selectedProduct.id)
+      const targetId = selectedProduct?._id || selectedProduct?.id
+      await adminService.deleteProduct(targetId)
       toast.success(`"${selectedProduct.name}" deleted from database`)
       setIsDeleteOpen(false)
       setSelectedProduct(null)
-      await loadData()
+      await Promise.all([loadData(), refreshProducts?.()])
     } catch (err) {
       toast.error('Failed to delete: ' + err.message)
     } finally {
@@ -336,9 +346,19 @@ const AdminProducts = () => {
             <textarea rows={3} value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} className="w-full bg-black/60 border border-white/15 rounded-xl p-2.5 text-white focus:border-gold" />
           </div>
 
-          <div className="flex items-center gap-2 pt-1">
-            <input type="checkbox" id="isFeatured" checked={formData.isFeatured} onChange={(e) => setFormData({ ...formData, isFeatured: e.target.checked })} className="w-4 h-4 rounded accent-gold" />
-            <label htmlFor="isFeatured" className="cursor-pointer">Featured Product</label>
+          <div className="flex flex-wrap items-center gap-6 pt-2">
+            <div className="flex items-center gap-2">
+              <input type="checkbox" id="isFeatured" checked={formData.isFeatured} onChange={(e) => setFormData({ ...formData, isFeatured: e.target.checked })} className="w-4 h-4 rounded accent-gold" />
+              <label htmlFor="isFeatured" className="cursor-pointer">Featured Product</label>
+            </div>
+            <div className="flex items-center gap-2">
+              <input type="checkbox" id="isBestSeller" checked={formData.isBestSeller} onChange={(e) => setFormData({ ...formData, isBestSeller: e.target.checked })} className="w-4 h-4 rounded accent-gold" />
+              <label htmlFor="isBestSeller" className="cursor-pointer">Best Seller</label>
+            </div>
+            <div className="flex items-center gap-2">
+              <input type="checkbox" id="isNewItem" checked={formData.isNewItem} onChange={(e) => setFormData({ ...formData, isNewItem: e.target.checked })} className="w-4 h-4 rounded accent-gold" />
+              <label htmlFor="isNewItem" className="cursor-pointer">New Arrival</label>
+            </div>
           </div>
 
           <div className="flex justify-end gap-3 pt-4 border-t border-white/10">

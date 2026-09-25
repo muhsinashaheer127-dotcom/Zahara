@@ -9,8 +9,8 @@ export const ProductProvider = ({ children }) => {
   const [loading,    setLoading]    = useState(true)
   const [error,      setError]      = useState(null)
 
-  const loadData = useCallback(async () => {
-    setLoading(true)
+  const loadData = useCallback(async (isSilent = false) => {
+    if (!isSilent) setLoading(true)
     setError(null)
     try {
       // Load live data from MongoDB via the backend API
@@ -27,12 +27,37 @@ export const ProductProvider = ({ children }) => {
       setProducts([])
       setCategories([])
     } finally {
-      setLoading(false)
+      if (!isSilent) setLoading(false)
     }
   }, [])
 
   useEffect(() => {
     loadData()
+  }, [loadData])
+
+  // Real-time synchronization: listen for admin changes within the tab and across browser tabs
+  useEffect(() => {
+    const handleProductsChanged = () => {
+      loadData(true)
+    }
+    const handleStorage = (e) => {
+      if (e.key === 'zahara_products_version') {
+        loadData(true)
+      }
+    }
+    const handleFocus = () => {
+      loadData(true)
+    }
+
+    window.addEventListener('zahara:products-changed', handleProductsChanged)
+    window.addEventListener('storage', handleStorage)
+    window.addEventListener('focus', handleFocus)
+
+    return () => {
+      window.removeEventListener('zahara:products-changed', handleProductsChanged)
+      window.removeEventListener('storage', handleStorage)
+      window.removeEventListener('focus', handleFocus)
+    }
   }, [loadData])
 
   const getProductBySlug = useCallback(
@@ -56,7 +81,7 @@ export const ProductProvider = ({ children }) => {
     loading,
     error,
     getProductBySlug,
-    refreshProducts: loadData,
+    refreshProducts: () => loadData(false),
   }
 
   return <ProductContext.Provider value={value}>{children}</ProductContext.Provider>

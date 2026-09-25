@@ -1,6 +1,6 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { FiHeart, FiStar, FiMinus, FiPlus, FiShoppingBag, FiShare2 } from 'react-icons/fi'
+import { FiHeart, FiStar, FiMinus, FiPlus, FiShoppingBag, FiShare2, FiRefreshCw } from 'react-icons/fi'
 import SEO from '../../components/SEO'
 import ProductCard from '../../components/ProductCard/ProductCard'
 import AnimateOnScroll from '../../components/AnimateOnScroll'
@@ -10,14 +10,30 @@ import ReviewsSection from '../../components/ProductDetails/ReviewsSection'
 import FeaturesCard from '../../components/ProductDetails/FeaturesCard'
 import RentalDurationSelector from '../../components/ProductDetails/RentalDurationSelector'
 import { useProducts } from '../../context/ProductContext'
+import { productService } from '../../services/api'
 import { formatPrice, calculateRentalTotal } from '../../utils/helpers'
 import { useCart } from '../../context/CartContext'
 
 const ProductDetails = () => {
   const { slug } = useParams()
-  const { products, getProductBySlug } = useProducts()
-  const product = getProductBySlug(slug)
+  const { products, getProductBySlug, loading } = useProducts()
+  const [directProduct, setDirectProduct] = useState(null)
+  const [fetchingDirect, setFetchingDirect] = useState(false)
+
+  const product = getProductBySlug(slug) || directProduct
   const { addToCart, toggleWishlist, isInWishlist } = useCart()
+
+  useEffect(() => {
+    if (!product && slug) {
+      setFetchingDirect(true)
+      productService.getById(slug)
+        .then((data) => {
+          if (data && !data.error) setDirectProduct(data)
+        })
+        .catch(() => {})
+        .finally(() => setFetchingDirect(false))
+    }
+  }, [product, slug])
 
   const [selectedImage, setSelectedImage] = useState(0)
   const [duration, setDuration] = useState(product?.duration || 3)
@@ -34,6 +50,15 @@ const ProductDetails = () => {
     'Easy Return',
     'Sanitized Before Delivery',
   ]
+
+  if (loading || fetchingDirect) {
+    return (
+      <div className="section-padding text-center flex flex-col items-center justify-center min-h-[50vh] gap-3">
+        <FiRefreshCw className="animate-spin text-gold" size={28} />
+        <p className="text-white/60">Loading jewellery details...</p>
+      </div>
+    )
+  }
 
   if (!product) {
     return (

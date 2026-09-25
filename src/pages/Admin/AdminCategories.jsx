@@ -5,8 +5,10 @@ import AdminTable from '../../components/admin/AdminTable'
 import AdminModal from '../../components/admin/AdminModal'
 import SEO from '../../components/SEO'
 import adminService from '../../services/adminService'
+import { useProducts } from '../../context/ProductContext'
 
 const AdminCategories = () => {
+  const { refreshProducts } = useProducts()
   const [categories, setCategories] = useState([])
   const [isAddEditOpen, setIsAddEditOpen] = useState(false)
   const [isDeleteOpen, setIsDeleteOpen] = useState(false)
@@ -53,7 +55,7 @@ const AdminCategories = () => {
         toast.success('Category added!')
       }
       setIsAddEditOpen(false)
-      await loadCategories()
+      await Promise.all([loadCategories(), refreshProducts?.()])
     } catch (err) {
       toast.error('Failed to save category: ' + err.message)
     }
@@ -65,7 +67,7 @@ const AdminCategories = () => {
       await adminService.deleteCategory(selectedCategory.id || selectedCategory.slug)
       toast.success(`Category "${selectedCategory.name}" deleted`)
       setIsDeleteOpen(false)
-      await loadCategories()
+      await Promise.all([loadCategories(), refreshProducts?.()])
     } catch (err) {
       toast.error('Failed to delete: ' + err.message)
     }

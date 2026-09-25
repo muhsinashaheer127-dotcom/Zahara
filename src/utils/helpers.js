@@ -25,18 +25,19 @@ export const filterProducts = (products, filters) => {
     const q = filters.search.toLowerCase()
     result = result.filter(
       (p) =>
-        p.name.toLowerCase().includes(q) ||
-        p.category.toLowerCase().includes(q) ||
-        p.occasion.toLowerCase().includes(q)
+        (p.name && p.name.toLowerCase().includes(q)) ||
+        (p.category && p.category.toLowerCase().includes(q)) ||
+        (p.occasion && p.occasion.toLowerCase().includes(q)) ||
+        (p.description && p.description.toLowerCase().includes(q))
     )
   }
 
   if (filters.category && filters.category !== 'all') {
-    result = result.filter((p) => p.category === filters.category)
+    result = result.filter((p) => String(p.category || '').toLowerCase() === String(filters.category).toLowerCase())
   }
 
   if (filters.occasion && filters.occasion !== 'all') {
-    result = result.filter((p) => p.occasion === filters.occasion)
+    result = result.filter((p) => String(p.occasion || '').toLowerCase() === String(filters.occasion).toLowerCase())
   }
 
   switch (filters.priceRange) {

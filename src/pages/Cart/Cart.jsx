@@ -112,7 +112,7 @@ const Cart = () => {
                       <FiTag />
                     </button>
                   </div>
-                  <p className="text-xs text-white/30 mt-2">Try: ZAHARA10 for 10% off</p>
+                  <p className="text-xs text-white/30 mt-2">Try ZAHARA for offers</p>
 
                   <button
                     type="button"

@@ -82,12 +82,18 @@ class AdminService {
       deposit:           Number(product.deposit) || 0,
       availableQuantity: Number(product.availableQuantity) || 1,
       availability:      product.availability || 'available',
-      isFeatured:        product.isFeatured || false,
+      isFeatured:        Boolean(product.isFeatured),
+      isBestSeller:      Boolean(product.isBestSeller),
+      isNewItem:         Boolean(product.isNewItem !== undefined ? product.isNewItem : true),
       images:            product.images || ['https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=800&q=80'],
       description:       product.description || '',
       specifications:    product.specifications || { material: product.material || '', insurance: 'Included' },
     }
     const created = await productService.create(payload)
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('zahara_products_version', Date.now().toString())
+      window.dispatchEvent(new CustomEvent('zahara:products-changed'))
+    }
     return normalizeProduct(created)
   }
 
@@ -103,17 +109,28 @@ class AdminService {
       deposit:           Number(updates.deposit),
       availableQuantity: Number(updates.availableQuantity),
       availability:      updates.availability,
-      isFeatured:        updates.isFeatured,
+      isFeatured:        Boolean(updates.isFeatured),
+      isBestSeller:      Boolean(updates.isBestSeller),
+      isNewItem:         Boolean(updates.isNewItem || updates.isNew),
       images:            updates.images || [],
       description:       updates.description || '',
       specifications:    updates.specifications || { material: updates.material || '', insurance: 'Included' },
     }
     const updated = await productService.update(id, payload)
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('zahara_products_version', Date.now().toString())
+      window.dispatchEvent(new CustomEvent('zahara:products-changed'))
+    }
     return normalizeProduct(updated)
   }
 
   async deleteProduct(id) {
-    return await productService.remove(id)
+    const res = await productService.remove(id)
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('zahara_products_version', Date.now().toString())
+      window.dispatchEvent(new CustomEvent('zahara:products-changed'))
+    }
+    return res
   }
 
   // ── CATEGORIES ────────────────────────────────────────────────────────────
@@ -124,15 +141,30 @@ class AdminService {
 
   async addCategory(cat) {
     const slug = cat.slug || cat.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '')
-    return await categoryService.create({ ...cat, customId: cat.id || slug, slug })
+    const res = await categoryService.create({ ...cat, customId: cat.id || slug, slug })
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('zahara_products_version', Date.now().toString())
+      window.dispatchEvent(new CustomEvent('zahara:products-changed'))
+    }
+    return res
   }
 
   async updateCategory(id, updates) {
-    return await categoryService.update(id, updates)
+    const res = await categoryService.update(id, updates)
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('zahara_products_version', Date.now().toString())
+      window.dispatchEvent(new CustomEvent('zahara:products-changed'))
+    }
+    return res
   }
 
   async deleteCategory(id) {
-    return await categoryService.remove(id)
+    const res = await categoryService.remove(id)
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('zahara_products_version', Date.now().toString())
+      window.dispatchEvent(new CustomEvent('zahara:products-changed'))
+    }
+    return res
   }
 
   // ── USERS ─────────────────────────────────────────────────────────────────
