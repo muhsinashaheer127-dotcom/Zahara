@@ -7,7 +7,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://pfafkiztoqkrvsagvacz.supabase.co/functions/v1/:path*"
+      "destination": "https://server-nine-phi-20.vercel.app/api/:path*"
     }
   ],
   "headers": [
