@@ -30,7 +30,7 @@ const Contact = () => {
                 {[
                   { icon: FiInstagram, label: 'Instagram', value: '@zahara_rental_jewellery', href: 'https://www.instagram.com/zahara_rental_jewellery?igsh=MThqY3Z5cjRxZTMybQ==', external: true },
                   { icon: FiMail, label: 'Email', value: 'zahararentaljewellery@gmail.com', href: 'mailto:zahararentaljewellery@gmail.com' },
-                  { icon: FiPhone, label: 'Phone', value: '+91 9747133559', href: 'tel:+919747133559' },
+                  { icon: FiPhone, label: 'Phone', value: '+91 7510484236', href: 'tel:+917510484236' },
                   { icon: FiMapPin, label: 'Address', value: 'SR building Lalaji junction near H&J mall Karunagappally, Kollam, Kerala', href: 'https://maps.app.goo.gl/KcXzPHceRU8oFJxSA', external: true },
                 ].map((item) => (
                   <a

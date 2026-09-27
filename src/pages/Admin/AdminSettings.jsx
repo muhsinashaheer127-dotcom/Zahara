@@ -259,7 +259,7 @@ const AdminSettings = () => {
               <label className="block text-white/70 mb-1">Contact WhatsApp Number</label>
               <input
                 type="text"
-                value={settings.contactPhone || '+91 9747133559'}
+                value={settings.contactPhone || '+91 7510484236'}
                 onChange={(e) => handleChange('contactPhone', e.target.value)}
                 className="w-full bg-black/60 border border-white/15 rounded-xl p-2.5 text-white focus:border-gold"
               />

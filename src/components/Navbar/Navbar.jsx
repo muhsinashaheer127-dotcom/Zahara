@@ -124,22 +124,7 @@ const Navbar = () => {
         <div className="flex items-center gap-2 sm:gap-3 md:gap-4">
           {isAuthenticated ? (
             <>
-              {/* Notifications Icon */}
-              <button
-                type="button"
-                onClick={() => setUnreadNotifications(0)}
-                className="relative p-2.5 min-h-[44px] min-w-[44px] flex items-center justify-center text-white/80 hover:text-[#D4AF37] transition-colors"
-                aria-label="Notifications"
-                title="Notifications"
-              >
-                <FiBell size={20} />
-                {unreadNotifications > 0 && (
-                  <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#D4AF37] animate-ping" />
-                )}
-                {unreadNotifications > 0 && (
-                  <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#D4AF37]" />
-                )}
-              </button>
+              
 
               {/* Wishlist Icon */}
               <Link

@@ -1,5 +1,9 @@
 import axios from 'axios'
 import { isIntentionalLogout } from '../utils/authSession'
+import supabaseService from './supabaseService'
+
+// Use Supabase in production, Express backend in development
+const USE_SUPABASE = import.meta.env.VITE_USE_SUPABASE === 'true' || !import.meta.env.VITE_API_URL
 
 /** Axios instance — proxied to http://localhost:5000 via vite */
 const api = axios.create({
@@ -74,6 +78,9 @@ api.interceptors.response.use(
 
 /** Check health and MongoDB connection status */
 export const checkBackendHealth = async () => {
+  if (USE_SUPABASE) {
+    return await supabaseService.health()
+  }
   try {
     const res = await api.get('/health')
     return res.data
@@ -83,7 +90,7 @@ export const checkBackendHealth = async () => {
 }
 
 /** Products */
-export const productService = {
+export const productService = USE_SUPABASE ? supabaseService.products : {
   getAll:    async (params = {}) => (await api.get('/products', { params })).data,
   getById:   async (id)         => (await api.get(`/products/${id}`)).data,
   create:    async (data)       => (await api.post('/products', data)).data,
@@ -92,7 +99,7 @@ export const productService = {
 }
 
 /** Categories */
-export const categoryService = {
+export const categoryService = USE_SUPABASE ? supabaseService.categories : {
   getAll:  async ()         => (await api.get('/categories')).data,
   create:  async (data)     => (await api.post('/categories', data)).data,
   update:  async (id, data) => (await api.put(`/categories/${id}`, data)).data,
@@ -100,7 +107,7 @@ export const categoryService = {
 }
 
 /** Users */
-export const userService = {
+export const userService = USE_SUPABASE ? supabaseService.users : {
   getAll:        async ()           => (await api.get('/users')).data,
   getById:       async (id)         => (await api.get(`/users/${id}`)).data,
   updateProfile: async (id, data)   => (await api.put(`/users/${id}`, data)).data,
@@ -109,7 +116,7 @@ export const userService = {
 }
 
 /** Bookings */
-export const bookingService = {
+export const bookingService = USE_SUPABASE ? supabaseService.bookings : {
   getAll:        async (params = {})                => (await api.get('/bookings', { params })).data,
   getById:       async (id)                         => (await api.get(`/bookings/${id}`)).data,
   create:        async (data)                       => (await api.post('/bookings', data)).data,
@@ -117,19 +124,19 @@ export const bookingService = {
 }
 
 /** Orders */
-export const orderService = {
+export const orderService = USE_SUPABASE ? supabaseService.orders : {
   getAll:       async ()           => (await api.get('/orders')).data,
   updateStatus: async (id, status) => (await api.put(`/orders/${id}/status`, { status })).data,
 }
 
 /** Payments */
-export const paymentService = {
+export const paymentService = USE_SUPABASE ? supabaseService.payments : {
   getAll:       async ()           => (await api.get('/payments')).data,
   updateStatus: async (id, status) => (await api.put(`/payments/${id}/status`, { paymentStatus: status })).data,
 }
 
 /** Reviews */
-export const reviewService = {
+export const reviewService = USE_SUPABASE ? supabaseService.reviews : {
   getAll:       async ()           => (await api.get('/reviews')).data,
   create:       async (data)       => (await api.post('/reviews', data)).data,
   updateStatus: async (id, status) => (await api.put(`/reviews/${id}/status`, { status })).data,
@@ -137,13 +144,18 @@ export const reviewService = {
 }
 
 /** Settings */
-export const settingsService = {
+export const settingsService = USE_SUPABASE ? supabaseService.settings : {
   get:  async ()       => (await api.get('/settings')).data,
   save: async (data)   => (await api.put('/settings', data)).data,
 }
 
 /** Auth */
-export const authService = {
+export const authService = USE_SUPABASE ? {
+  login:    async (email, password) => supabaseService.auth.login(email, password),
+  register: async (data)            => supabaseService.auth.register(data),
+  logout:   async ()                 => supabaseService.auth.logout(),
+  getCurrentUser: async ()           => supabaseService.auth.getCurrentUser(),
+} : {
   login:    async (email, password) => (await api.post('/auth/login', { email, password })).data,
   register: async (data)            => (await api.post('/auth/register', data)).data,
 }

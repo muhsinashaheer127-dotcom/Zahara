@@ -39,7 +39,7 @@ const Cart = () => {
       (discount > 0 ? `Discount: -${formatPrice(discount)}\n` : '') +
       `Grand Total: ${formatPrice(finalTotal)}\n\n` +
       `Please confirm availability and next steps. Thank you!`
-    const url = `https://wa.me/919747133559?text=${encodeURIComponent(message)}`
+    const url = `https://wa.me/917510484236?text=${encodeURIComponent(message)}`
     window.open(url, '_blank')
   }
 

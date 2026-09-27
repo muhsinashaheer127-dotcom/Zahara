@@ -11,7 +11,7 @@ import { useNavigate } from 'react-router-dom'
 import { bookingService } from '../../services/api'
 import toast from 'react-hot-toast'
 
-const WHATSAPP_NUMBER = '919747133559'
+const WHATSAPP_NUMBER = '917510484236'
 
 const Checkout = () => {
   const { cartItems, cartSummary, clearCart } = useCart()

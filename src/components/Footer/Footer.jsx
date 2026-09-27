@@ -60,14 +60,14 @@ const Footer = () => (
             </li>
             <li className="flex items-center gap-3 text-white/60 text-sm">
               <FiPhone className="text-gold shrink-0" />
-              <span>+91 9747133559</span>
+              <span>+91 7510484236</span>
             </li>
           </ul>
           <div className="flex gap-3 sm:gap-4 mt-6">
             {[
               { Icon: FiInstagram, href: 'https://www.instagram.com/zahara_rental_jewellery?igsh=MThqY3Z5cjRxZTMybQ==', label: 'Instagram', target: '_blank', rel: 'noopener noreferrer' },
               { Icon: FiMail, href: 'mailto:zahararentaljewellery@gmail.com', label: 'Email' },
-              { Icon: FiPhone, href: 'tel:+919747133559', label: 'Phone' },
+              { Icon: FiPhone, href: 'tel:+917510484236', label: 'Phone' },
               { Icon: FiMap, href: 'https://maps.app.goo.gl/KcXzPHceRU8oFJxSA', label: 'Location', target: '_blank', rel: 'noopener noreferrer' }
             ].map(({ Icon, href, label, target, rel }, i) => (
               <a

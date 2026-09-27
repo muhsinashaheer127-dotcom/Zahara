@@ -3,7 +3,7 @@ import { motion } from 'framer-motion'
 import { formatPrice } from '../../utils/helpers'
 
 const StickyBookingCard = ({ product, duration, quantity, startDate, endDate, rentalTotal, onRent, onWishlist, onShare, inWishlist }) => {
-  const whatsappNumber = '9747133559'
+  const whatsappNumber = '7510484236'
   
   const isUnavailable =
     product.availability === 'out_of_stock' ||
