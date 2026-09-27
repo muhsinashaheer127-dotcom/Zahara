@@ -1,13 +1,25 @@
 import axios from 'axios'
 import { isIntentionalLogout } from '../utils/authSession'
-import supabaseService from './supabaseService'
+import {
+  supabaseProductService,
+  supabaseCategoryService,
+  supabaseUserService,
+  supabaseBookingService,
+  supabaseOrderService,
+  supabasePaymentService,
+  supabaseReviewService,
+  supabaseSettingsService,
+  supabaseHealth,
+} from './supabaseApi'
 
-// Use Supabase in production, Express backend in development
-const USE_SUPABASE = import.meta.env.VITE_USE_SUPABASE === 'true' || !import.meta.env.VITE_API_URL
+/** Vercel has no Express process — talk to Supabase directly in production. */
+export const USE_SUPABASE =
+  import.meta.env.VITE_USE_SUPABASE === 'true' || Boolean(import.meta.env.PROD)
 
-/** Axios instance — proxied to http://localhost:5000 via vite */
+const API_BASE_URL = import.meta.env.VITE_API_URL || '/api'
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || '/api',
+  baseURL: API_BASE_URL,
   timeout: 15000,
   headers: { 'Content-Type': 'application/json' },
 })
@@ -18,7 +30,6 @@ const getStoredToken = () => {
   const onAdminRoute =
     typeof window !== 'undefined' && window.location.pathname.startsWith('/admin')
 
-  // Prefer admin token in the admin portal (stale customer tokens must not override)
   if (onAdminRoute) {
     return adminToken || clientToken
   }
@@ -32,7 +43,6 @@ const clearStoredAuth = () => {
   localStorage.removeItem('zh_admin_user')
 }
 
-// Attach JWT token to every request if available
 api.interceptors.request.use((config) => {
   try {
     const token = getStoredToken()
@@ -40,12 +50,11 @@ api.interceptors.request.use((config) => {
       config.headers.Authorization = `Bearer ${token}`
     }
   } catch {
-    /* ignore parse error */
+    /* ignore */
   }
   return config
 })
 
-// Response error handler: extract readable message; clear expired/invalid sessions
 api.interceptors.response.use(
   (response) => response,
   (error) => {
@@ -59,14 +68,10 @@ api.interceptors.response.use(
     const isAuthAttempt = url.includes('/auth/login') || url.includes('/auth/register')
 
     if (status === 401 && !isAuthAttempt && !isIntentionalLogout()) {
-      const sessionInvalid =
-        /token|session|log in|authentication/i.test(String(message))
+      const sessionInvalid = /token|session|log in|authentication/i.test(String(message))
       if (sessionInvalid) {
         clearStoredAuth()
-        if (
-          typeof window !== 'undefined' &&
-          window.location.pathname.startsWith('/admin')
-        ) {
+        if (typeof window !== 'undefined' && window.location.pathname.startsWith('/admin')) {
           window.location.replace('/login?redirect=/admin/dashboard')
         }
       }
@@ -76,11 +81,8 @@ api.interceptors.response.use(
   }
 )
 
-/** Check health and MongoDB connection status */
 export const checkBackendHealth = async () => {
-  if (USE_SUPABASE) {
-    return await supabaseService.health()
-  }
+  if (USE_SUPABASE) return supabaseHealth()
   try {
     const res = await api.get('/health')
     return res.data
@@ -89,78 +91,80 @@ export const checkBackendHealth = async () => {
   }
 }
 
-/** Products */
-export const productService = USE_SUPABASE ? supabaseService.products : {
-  getAll:    async (params = {}) => (await api.get('/products', { params })).data,
-  getById:   async (id)         => (await api.get(`/products/${id}`)).data,
-  create:    async (data)       => (await api.post('/products', data)).data,
-  update:    async (id, data)   => (await api.put(`/products/${id}`, data)).data,
-  remove:    async (id)         => (await api.delete(`/products/${id}`)).data,
-}
+export const productService = USE_SUPABASE
+  ? supabaseProductService
+  : {
+      getAll:    async (params = {}) => (await api.get('/products', { params })).data,
+      getById:   async (id)         => (await api.get(`/products/${id}`)).data,
+      create:    async (data)       => (await api.post('/products', data)).data,
+      update:    async (id, data)   => (await api.put(`/products/${id}`, data)).data,
+      remove:    async (id)         => (await api.delete(`/products/${id}`)).data,
+    }
 
-/** Categories */
-export const categoryService = USE_SUPABASE ? supabaseService.categories : {
-  getAll:  async ()         => (await api.get('/categories')).data,
-  create:  async (data)     => (await api.post('/categories', data)).data,
-  update:  async (id, data) => (await api.put(`/categories/${id}`, data)).data,
-  remove:  async (id)       => (await api.delete(`/categories/${id}`)).data,
-}
+export const categoryService = USE_SUPABASE
+  ? supabaseCategoryService
+  : {
+      getAll:  async ()         => (await api.get('/categories')).data,
+      create:  async (data)     => (await api.post('/categories', data)).data,
+      update:  async (id, data) => (await api.put(`/categories/${id}`, data)).data,
+      remove:  async (id)       => (await api.delete(`/categories/${id}`)).data,
+    }
 
-/** Users */
-export const userService = USE_SUPABASE ? supabaseService.users : {
-  getAll:        async ()           => (await api.get('/users')).data,
-  getById:       async (id)         => (await api.get(`/users/${id}`)).data,
-  updateProfile: async (id, data)   => (await api.put(`/users/${id}`, data)).data,
-  updateStatus:  async (id, status) => (await api.put(`/users/${id}/status`, { status })).data,
-  remove:        async (id)         => (await api.delete(`/users/${id}`)).data,
-}
+export const userService = USE_SUPABASE
+  ? supabaseUserService
+  : {
+      getAll:        async ()           => (await api.get('/users')).data,
+      getById:       async (id)         => (await api.get(`/users/${id}`)).data,
+      updateProfile: async (id, data)   => (await api.put(`/users/${id}`, data)).data,
+      updateStatus:  async (id, status) => (await api.put(`/users/${id}/status`, { status })).data,
+      remove:        async (id)         => (await api.delete(`/users/${id}`)).data,
+    }
 
-/** Bookings */
-export const bookingService = USE_SUPABASE ? supabaseService.bookings : {
-  getAll:        async (params = {})                => (await api.get('/bookings', { params })).data,
-  getById:       async (id)                         => (await api.get(`/bookings/${id}`)).data,
-  create:        async (data)                       => (await api.post('/bookings', data)).data,
-  updateStatus:  async (id, status, paymentStatus)  => (await api.put(`/bookings/${id}/status`, { status, paymentStatus })).data,
-}
+export const bookingService = USE_SUPABASE
+  ? supabaseBookingService
+  : {
+      getAll:        async (params = {})               => (await api.get('/bookings', { params })).data,
+      getById:       async (id)                        => (await api.get(`/bookings/${id}`)).data,
+      create:        async (data)                      => (await api.post('/bookings', data)).data,
+      updateStatus:  async (id, status, paymentStatus) => (await api.put(`/bookings/${id}/status`, { status, paymentStatus })).data,
+    }
 
-/** Orders */
-export const orderService = USE_SUPABASE ? supabaseService.orders : {
-  getAll:       async ()           => (await api.get('/orders')).data,
-  updateStatus: async (id, status) => (await api.put(`/orders/${id}/status`, { status })).data,
-}
+export const orderService = USE_SUPABASE
+  ? supabaseOrderService
+  : {
+      getAll:       async ()           => (await api.get('/orders')).data,
+      updateStatus: async (id, status) => (await api.put(`/orders/${id}/status`, { status })).data,
+    }
 
-/** Payments */
-export const paymentService = USE_SUPABASE ? supabaseService.payments : {
-  getAll:       async ()           => (await api.get('/payments')).data,
-  updateStatus: async (id, status) => (await api.put(`/payments/${id}/status`, { paymentStatus: status })).data,
-}
+export const paymentService = USE_SUPABASE
+  ? supabasePaymentService
+  : {
+      getAll:       async ()           => (await api.get('/payments')).data,
+      updateStatus: async (id, status) => (await api.put(`/payments/${id}/status`, { paymentStatus: status })).data,
+    }
 
-/** Reviews */
-export const reviewService = USE_SUPABASE ? supabaseService.reviews : {
-  getAll:       async ()           => (await api.get('/reviews')).data,
-  create:       async (data)       => (await api.post('/reviews', data)).data,
-  updateStatus: async (id, status) => (await api.put(`/reviews/${id}/status`, { status })).data,
-  remove:       async (id)         => (await api.delete(`/reviews/${id}`)).data,
-}
+export const reviewService = USE_SUPABASE
+  ? supabaseReviewService
+  : {
+      getAll:       async ()           => (await api.get('/reviews')).data,
+      create:       async (data)       => (await api.post('/reviews', data)).data,
+      updateStatus: async (id, status) => (await api.put(`/reviews/${id}/status`, { status })).data,
+      remove:       async (id)         => (await api.delete(`/reviews/${id}`)).data,
+    }
 
-/** Settings */
-export const settingsService = USE_SUPABASE ? supabaseService.settings : {
-  get:  async ()       => (await api.get('/settings')).data,
-  save: async (data)   => (await api.put('/settings', data)).data,
-}
+export const settingsService = USE_SUPABASE
+  ? supabaseSettingsService
+  : {
+      get:  async ()     => (await api.get('/settings')).data,
+      save: async (data) => (await api.put('/settings', data)).data,
+    }
 
-/** Auth */
-export const authService = USE_SUPABASE ? {
-  login:    async (email, password) => supabaseService.auth.login(email, password),
-  register: async (data)            => supabaseService.auth.register(data),
-  logout:   async ()                 => supabaseService.auth.logout(),
-  getCurrentUser: async ()           => supabaseService.auth.getCurrentUser(),
-} : {
+/** Login/register always hit /api/auth so Vercel serverless + local Express both work. */
+export const authService = {
   login:    async (email, password) => (await api.post('/auth/login', { email, password })).data,
   register: async (data)            => (await api.post('/auth/register', data)).data,
 }
 
-/** Newsletter */
 export const newsletterService = {
   subscribe: async (email) => {
     await new Promise((r) => setTimeout(r, 400))

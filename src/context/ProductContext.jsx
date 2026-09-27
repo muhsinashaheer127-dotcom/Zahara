@@ -13,7 +13,7 @@ export const ProductProvider = ({ children }) => {
     if (!isSilent) setLoading(true)
     setError(null)
     try {
-      // Load live data from MongoDB via the backend API
+      // Load catalog from Supabase (production) or Express (local)
       const [apiProducts, apiCategories] = await Promise.all([
         productService.getAll(),
         categoryService.getAll(),
@@ -23,7 +23,7 @@ export const ProductProvider = ({ children }) => {
       setCategories(Array.isArray(apiCategories) ? apiCategories : [])
     } catch (err) {
       console.error('[ProductContext] Failed to load data from backend:', err.message)
-      setError(err.message || 'Unable to load products from server. Please ensure the backend and MongoDB are running.')
+      setError(err.message || 'Unable to load products. Check the Supabase connection.')
       setProducts([])
       setCategories([])
     } finally {
