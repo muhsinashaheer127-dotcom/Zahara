@@ -7,10 +7,11 @@ import { authenticateUser, requireAdmin } from '../middleware/auth.js'
 
 const router = express.Router()
 
+const DEFAULT_JWT_SECRET = 'zahara_super_secret_jwt_key_change_in_production_2025'
+
 /** Generate a signed JWT token for a user */
 const generateToken = (user) => {
-  const secret = process.env.JWT_SECRET
-  if (!secret) throw new Error('JWT_SECRET is not configured in .env')
+  const secret = process.env.JWT_SECRET || DEFAULT_JWT_SECRET
   return jwt.sign(
     { id: user.id, customId: user.customId, email: user.email, role: user.role, name: user.name },
     secret,
