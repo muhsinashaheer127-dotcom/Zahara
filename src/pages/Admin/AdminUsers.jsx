@@ -70,7 +70,7 @@ const AdminUsers = () => {
       header: 'Customer Name',
       render: (u) => (
         <div className="flex items-center gap-3">
-          <img src={u.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80'} alt={u.name} className="w-10 h-10 rounded-full object-cover border border-gold/30 shrink-0" />
+          <img src={u.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80'} alt={u.name} className="w-10 h-10 rounded-full object-cover border border-gold/30 shrink-0" onError={(e) => { e.currentTarget.src = 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80' }} />
           <div>
             <p className="font-semibold text-white text-sm">{u.name}</p>
             <p className="text-[11px] text-gold/70">{u.email}</p>
@@ -146,7 +146,7 @@ const AdminUsers = () => {
         {selectedUser && (
           <div className="space-y-4 text-xs text-white/80">
             <div className="flex items-center gap-4">
-              <img src={selectedUser.avatar} alt={selectedUser.name} className="w-20 h-20 rounded-full object-cover border border-gold/40" />
+              <img src={selectedUser.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80'} alt={selectedUser.name} className="w-20 h-20 rounded-full object-cover border border-gold/40" onError={(e) => { e.currentTarget.src = 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80' }} />
               <div>
                 <h4 className="font-bold text-base text-gold">{selectedUser.name}</h4>
                 <p className="text-white/60">{selectedUser.email}</p>

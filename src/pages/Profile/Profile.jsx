@@ -132,6 +132,7 @@ const Profile = () => {
                       src={user.avatar}
                       alt={user.name}
                       className="w-24 h-24 sm:w-28 sm:h-28 rounded-full object-cover border-2 border-[#D4AF37] shadow-xl"
+                      onError={(e) => { e.currentTarget.style.display = 'none' }}
                     />
                   ) : (
                     <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-gradient-to-br from-[#D4AF37] via-[#C49A3A] to-[#B8941F] text-black font-bold text-3xl flex items-center justify-center border-2 border-[#D4AF37] shadow-xl font-[family-name:var(--font-heading)]">

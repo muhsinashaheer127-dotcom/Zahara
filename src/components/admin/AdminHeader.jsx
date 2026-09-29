@@ -171,6 +171,7 @@ const AdminHeader = ({ onMenuClick, searchTerm, setSearchTerm }) => {
                 src={adminUser?.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80'}
                 alt="Admin Avatar"
                 className="w-7 h-7 rounded-full object-cover border border-gold/40"
+                onError={(e) => { e.currentTarget.src = 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80' }}
               />
               <span className="text-xs font-semibold text-gold hidden md:block">
                 {adminUser?.name || 'Admin'}

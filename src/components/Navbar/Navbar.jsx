@@ -167,6 +167,7 @@ const Navbar = () => {
                       src={user.avatar}
                       alt={user.name}
                       className="w-7 h-7 rounded-full object-cover border border-[#D4AF37]"
+                      onError={(e) => { e.currentTarget.style.display = 'none'; e.currentTarget.nextSibling?.removeAttribute('style') }}
                     />
                   ) : (
                     <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[#D4AF37] to-[#B8941F] text-black font-bold text-xs flex items-center justify-center">

@@ -10,8 +10,20 @@ const throwIf = (error) => {
   if (error) throw new Error(error.message || 'Supabase request failed')
 }
 
-const matchId = (query, id) =>
-  query.or(`custom_id.eq.${id},slug.eq.${id},id.eq.${id}`)
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+
+const matchId = (query, id, { hasSlug = false } = {}) => {
+  if (!id) return query
+  const safeId = String(id).trim()
+  const conditions = [`custom_id.eq.${safeId}`]
+  if (hasSlug) {
+    conditions.push(`slug.eq.${safeId}`)
+  }
+  if (UUID_REGEX.test(safeId)) {
+    conditions.push(`id.eq.${safeId}`)
+  }
+  return query.or(conditions.join(','))
+}
 
 export const supabaseProductService = {
   getAll: async (params = {}) => {
@@ -26,7 +38,7 @@ export const supabaseProductService = {
     return (data || []).map(normalizeProduct)
   },
   getById: async (id) => {
-    const { data, error } = await matchId(supabase.from('products').select('*'), id).maybeSingle()
+    const { data, error } = await matchId(supabase.from('products').select('*'), id, { hasSlug: true }).maybeSingle()
     throwIf(error)
     if (!data) throw new Error('Product not found.')
     return normalizeProduct(data)
@@ -65,12 +77,12 @@ export const supabaseProductService = {
     Object.entries(map).forEach(([from, to]) => {
       if (payload[from] !== undefined) row[to] = payload[from]
     })
-    const { data, error } = await matchId(supabase.from('products').update(row).select(), id).maybeSingle()
+    const { data, error } = await matchId(supabase.from('products').update(row).select(), id, { hasSlug: true }).maybeSingle()
     throwIf(error)
     return normalizeProduct(data)
   },
   remove: async (id) => {
-    const { error } = await matchId(supabase.from('products').delete(), id)
+    const { error } = await matchId(supabase.from('products').delete(), id, { hasSlug: true })
     throwIf(error)
     return { success: true, id }
   },
@@ -99,12 +111,12 @@ export const supabaseCategoryService = {
     if (payload.slug !== undefined) row.slug = payload.slug
     if (payload.image !== undefined) row.image = payload.image
     if (payload.description !== undefined) row.description = payload.description
-    const { data, error } = await matchId(supabase.from('categories').update(row).select(), id).maybeSingle()
+    const { data, error } = await matchId(supabase.from('categories').update(row).select(), id, { hasSlug: true }).maybeSingle()
     throwIf(error)
     return normalizeCategory(data)
   },
   remove: async (id) => {
-    const { error } = await matchId(supabase.from('categories').delete(), id)
+    const { error } = await matchId(supabase.from('categories').delete(), id, { hasSlug: true })
     throwIf(error)
     return { success: true, id }
   },
@@ -159,7 +171,10 @@ export const supabaseUserService = {
 export const supabaseBookingService = {
   getAll: async (params = {}) => {
     let query = supabase.from('bookings').select('*')
-    if (params.userId) query = query.or(`customer_email.eq.${params.userId},user_id.eq.${params.userId}`)
+    if (params.userId) {
+      const safe = String(params.userId).trim()
+      query = query.or(`customer_email.eq.${safe},customer_name.eq.${safe}`)
+    }
     const { data, error } = await query.order('created_at', { ascending: false })
     throwIf(error)
     return (data || []).map(toCamel)
