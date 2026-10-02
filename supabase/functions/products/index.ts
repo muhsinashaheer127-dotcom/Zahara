@@ -17,7 +17,6 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBmYWZraXp0b3FrcnZzYWd2YWN6Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc5MDM2MTQ0MiwiZXhwIjoyMTA1OTM3NDQyfQ.5uEYH1c7dWMyxuiICra3QYtv6dlN4taK1gBnzE4Ae_A'
     )
 
-    const url = new URL(req.url)
     const method = req.method
 
     if (method === 'GET') {
