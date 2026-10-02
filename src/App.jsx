@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom'
 import { AnimatePresence } from 'framer-motion'
 import { Toaster } from 'react-hot-toast'
+import { Analytics } from '@vercel/analytics/react'
 import { AuthProvider } from './context/AuthContext'
 import { AdminAuthProvider } from './context/AdminAuthContext'
 import { CartProvider } from './context/CartContext'
@@ -182,6 +183,7 @@ const App = () => (
                 success: { iconTheme: { primary: '#D4AF37', secondary: '#000' } },
               }}
             />
+            <Analytics />
           </BrowserRouter>
         </CartProvider>
       </ProductProvider>
